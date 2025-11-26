@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Camas — Catálogo Muebles</title>
+  <link rel="stylesheet" href="assets/styles/shop-theme.css">
+</head>
+<body>
+  <header>
+    <h1>🛏️ Camas</h1>
+    <nav><a href="index.html">Inicio</a> · <a href="muebles-capitoneados.html">Capitoneados</a></nav>
+  </header>
+
+  <main class="seccion-productos">
+    <h2>Camas destacadas</h2>
+    <div class="galeria">
+      <article class="producto">
+        <img src="assets/images/camas/cama1.jpg" alt="Cama 1" loading="lazy">
+        <h3>Cama Moderna 1</h3>
+        <p>Disponible en tamaños 3/4, Camera, Queen y King.</p>
+        <p class="precio">💰 $145,000</p>
+        <select id="cama1-tamano" class="selector-precio">
+          <option value="145000">3/4 — $145,000</option>
+          <option value="160000">Queen — $160,000</option>
+        </select>
+        <button onclick="agregarAlCarrito('Cama Moderna 1', 145000)">🛒 Agregar al carrito</button>
+      </article>
+
+      <article class="producto">
+        <img src="assets/images/camas/cama2.jpg" alt="Cama 2" loading="lazy">
+        <h3>Cama Moderna 2</h3>
+        <p>Cabecera personalizada, varios colores.</p>
+        <p class="precio">💰 $170,000</p>
+        <select id="cama2-tamano" class="selector-precio">
+          <option value="170000">3/4 — $170,000</option>
+          <option value="180000">Queen — $180,000</option>
+        </select>
+        <button onclick="agregarAlCarrito('Cama Moderna 2', 170000)">🛒 Agregar al carrito</button>
+      </article>
+
+      <article class="producto">
+        <img src="assets/images/camas/cama3.jpg" alt="Cama 3" loading="lazy">
+        <h3>Cama Moderna 3</h3>
+        <p>Tapizado capitoneado opcional.</p>
+        <p class="precio">💰 $155,000</p>
+        <select id="cama3-tamano" class="selector-precio">
+          <option value="155000">3/4 — $155,000</option>
+          <option value="170000">Queen — $170,000</option>
+        </select>
+        <button onclick="agregarAlCarrito('Cama Moderna 3', 155000)">🛒 Agregar al carrito</button>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <p>© Muebles M &amp; M</p>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
