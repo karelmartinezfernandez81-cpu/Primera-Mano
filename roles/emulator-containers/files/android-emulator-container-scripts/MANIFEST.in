@@ -1,2 +1,0 @@
-include versioneer.py
-include emu/_version.py
