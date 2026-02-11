@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+	<title>Automatización Revoolico</title>
+	<meta name='robots' content='max-image-preview:large' />
+	
+	<style>
+		/* Reset básico */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		/* Variables de color */
+		:root {
+			--global-palette1: #2B6CB0;
+			--global-palette2: #215387;
+			--global-palette3: #1A202C;
+			--global-palette4: #2D3748;
+			--global-palette5: #4A5568;
+			--global-palette6: #718096;
+			--global-palette7: #EDF2F7;
+			--global-palette8: #F7FAFC;
+			--global-palette9: #ffffff;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-size: 17px;
+			line-height: 1.6;
+			color: var(--global-palette4);
+			background: var(--global-palette8);
+		}
+
+		.site {
+			background: var(--global-palette9);
+		}
+
+		/* Header */
+		.site-header {
+			background: #ffffff;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+
+		.site-header-inner-wrap {
+			max-width: 1290px;
+			margin: 0 auto;
+			padding: 0 1.5rem;
+		}
+
+		.site-main-header-inner-wrap {
+			min-height: 80px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.site-branding {
+			padding: 0;
+		}
+
+		.site-title {
+			font-weight: 700;
+			font-size: 26px;
+			line-height: 1.2;
+			color: var(--global-palette3);
+			margin: 0;
+		}
+
+		.site-title a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		/* Navigation */
+		.main-navigation ul {
+			list-style: none;
+			display: flex;
+			gap: 1rem;
+			margin: 0;
+			padding: 0;
+		}
+
+		.main-navigation a {
+			color: var(--global-palette5);
+			text-decoration: none;
+			padding: 0.6em 0.6em;
+			display: block;
+			transition: color 0.3s;
+		}
+
+		.main-navigation a:hover {
+			color: var(--global-palette1);
+		}
+
+		.main-navigation .current-menu-item a {
+			color: var(--global-palette3);
+			font-weight: 600;
+		}
+
+		/* Hero Section */
+		.entry-hero {
+			background: var(--global-palette7);
+			padding: 3rem 0;
+			text-align: center;
+		}
+
+		.entry-hero h1 {
+			font-size: 32px;
+			font-weight: 700;
+			color: var(--global-palette3);
+			margin: 0;
+		}
+
+		/* Content Area */
+		.content-area {
+			max-width: 1290px;
+			margin: 5rem auto;
+			padding: 0 1.5rem;
+		}
+
+		.entry {
+			background: var(--global-palette9);
+			box-shadow: 0px 15px 15px -10px rgba(0,0,0,0.05);
+		}
+
+		.entry-content-wrap {
+			padding: 2rem;
+		}
+
+		.entry-content p {
+			margin-bottom: 1rem;
+		}
+
+		/* Footer */
+		.site-footer {
+			background: var(--global-palette9);
+			border-top: 1px solid var(--global-palette7);
+			margin-top: 5rem;
+		}
+
+		.site-bottom-footer-inner-wrap {
+			max-width: 1290px;
+			margin: 0 auto;
+			padding: 2rem 1.5rem;
+			text-align: center;
+		}
+
+		.footer-html p {
+			margin: 0;
+			color: var(--global-palette5);
+			font-size: 14px;
+		}
+
+		.footer-html a {
+			color: var(--global-palette1);
+			text-decoration: none;
+		}
+
+		.footer-html a:hover {
+			text-decoration: underline;
+		}
+
+		/* Mobile Menu Toggle */
+		.menu-toggle-open {
+			display: none;
+			background: none;
+			border: 1px solid var(--global-palette5);
+			color: var(--global-palette5);
+			padding: 0.4em 0.6em;
+			font-size: 14px;
+			cursor: pointer;
+			border-radius: 4px;
+		}
+
+		/* Responsive */
+		@media (max-width: 1024px) {
+			.content-area {
+				margin: 3rem auto;
+			}
+
+			.entry-content-wrap {
+				padding: 1.5rem;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.main-navigation {
+				display: none;
+			}
+
+			.menu-toggle-open {
+				display: block;
+			}
+
+			.content-area {
+				margin: 2rem auto;
+			}
+
+			.entry-hero h1 {
+				font-size: 24px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div id="wrapper" class="site">
+		<a class="skip-link screen-reader-text" href="#main">Saltar al contenido</a>
+		
+		<header id="masthead" class="site-header" role="banner">
+			<div class="site-header-inner-wrap">
+				<div class="site-main-header-inner-wrap">
+					<div class="site-branding">
+						<a href="/">
+							<p class="site-title">Pruebas con Wordpress</p>
+						</a>
+					</div>
+
+					<nav class="main-navigation" role="navigation" aria-label="Principal">
+						<ul>
+							<li><a href="pagina-de-prueba-2.html">Página de Prueba 2</a></li>
+							<li class="current-menu-item"><a href="index.html">Automatización Revoolico</a></li>
+							<li><a href="becor-supervisor-dashboard.html">Becor Supervisor Dashboard</a></li>
+							<li><a href="office-manager-dashboard.html">Office Manager Dashboard</a></li>
+							<li><a href="gestor-de-expedientes.html">Gestor de Expedientes</a></li>
+							<li><a href="consentimiento-cliente.html">Consentimiento de Cliente</a></li>
+							<li><a href="auditoria-de-becor.html">Auditoría de Becor</a></li>
+							<li><a href="navegador-remoto.html">Navegador Remoto</a></li>
+						</ul>
+					</nav>
+
+					<button class="menu-toggle-open" aria-label="Abrir menú">
+						☰
+					</button>
+				</div>
+			</div>
+		</header>
+
+		<main id="inner-wrap" role="main">
+			<section class="entry-hero">
+				<div class="hero-container">
+					<header class="entry-header">
+						<h1 class="entry-title">Automatización Revoolico</h1>
+					</header>
+				</div>
+			</section>
+
+			<div id="primary" class="content-area">
+				<div id="main" class="site-main">
+					<article class="entry">
+						<div class="entry-content-wrap">
+							<div class="entry-content">
+								<p>Bienvenido a la página de Automatización Revoolico.</p>
+								<p>Esta es una versión simplificada sin autenticación.</p>
+							</div>
+						</div>
+					</article>
+				</div>
+			</div>
+		</main>
+
+		<footer id="colophon" class="site-footer" role="contentinfo">
+			<div class="site-footer-wrap">
+				<div class="site-bottom-footer-inner-wrap">
+					<div class="footer-html">
+						<p>&copy; 2026 Pruebas con Wordpress - Tema para WordPress por <a href="https://www.kadencewp.com/" rel="nofollow noopener">Kadence WP</a></p>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+</body>
+</html>
