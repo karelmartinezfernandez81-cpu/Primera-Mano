@@ -100,14 +100,6 @@
     min-height: 18px;
   }
 
-  #app {
-    display: none;
-    width: 100%;
-    height: 100vh;
-    border: none;
-    position: fixed;
-    top: 0; left: 0;
-  }
 </style>
 </head>
 <body>
@@ -122,9 +114,6 @@
   <div class="status" id="status">Iniciando…</div>
 </div>
 
-<!-- El contenido se renderiza aquí en un iframe aislado -->
-<iframe id="app" sandbox="allow-scripts allow-same-origin allow-forms" title="Santa Biblia 1909"></iframe>
-
 <script>
 (function() {
   'use strict';
@@ -134,7 +123,7 @@
   const KEY = _k.join('');
   const KEY_BYTES = new TextEncoder().encode(KEY);
 
-  const bar   = document.getElementById('bar');
+  const bar    = document.getElementById('bar');
   const status = document.getElementById('status');
 
   function setProgress(pct, msg) {
@@ -142,7 +131,7 @@
     if (msg) status.textContent = msg;
   }
 
-  // ── Descifrado XOR en Workers (no bloquea UI) ──
+  // ── Descifrado XOR en memoria ──
   function xorDecrypt(encryptedBytes, keyBytes) {
     const out = new Uint8Array(encryptedBytes.length);
     const kl = keyBytes.length;
@@ -160,71 +149,68 @@
     return bytes;
   }
 
-  // ── Renderizar en iframe (aislado del inspector) ──
-  function renderInFrame(html) {
-    const frame = document.getElementById('app');
-    const loader = document.getElementById('loader');
-
-    // Loader fade out
-    loader.style.opacity = '0';
+  // ── Renderizar: reemplaza la página completa en memoria ──
+  // document.write sustituye el DOM actual — localStorage, indexedDB,
+  // todos los scripts y botones funcionan al 100%.
+  // view-source seguirá mostrando este loader, NO el HTML descifrado.
+  function renderPage(html) {
+    // Pequeño fade antes de reemplazar
+    document.getElementById('loader').style.opacity = '0';
     setTimeout(() => {
-      loader.style.display = 'none';
-      frame.style.display = 'block';
-    }, 600);
-
-    // Escribir en iframe — srcdoc no es inspeccionable como fuente normal
-    frame.srcdoc = html;
-
-    // Borrar la variable de memoria tras un tick
-    setTimeout(() => { html = null; }, 100);
+      document.open('text/html', 'replace');
+      document.write(html);
+      document.close();
+      html = null; // liberar memoria
+    }, 350);
   }
 
   // ── Flujo principal ──
   async function init() {
-    // 1. Registrar Service Worker
+
+    // 1. Registrar Service Worker (caché offline)
     if ('serviceWorker' in navigator) {
       try {
         await navigator.serviceWorker.register('./sw.js', { scope: './' });
         setProgress(10, 'Caché activado…');
       } catch(e) {
-        setProgress(10, 'Cargando…');
+        setProgress(10, 'Iniciando…');
       }
     }
 
-    // 2. Obtener archivo cifrado (desde cache si disponible)
+    // 2. Cargar archivo cifrado (desde caché del SW si ya se visitó antes)
     setProgress(20, 'Leyendo Escrituras…');
     let encText;
     try {
       const resp = await fetch('./bible.enc', { cache: 'force-cache' });
-      if (!resp.ok) throw new Error('fetch failed');
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       encText = await resp.text();
     } catch(e) {
       // Segundo intento sin force-cache
       const resp = await fetch('./bible.enc');
+      if (!resp.ok) throw new Error(`No se pudo cargar bible.enc (${resp.status})`);
       encText = await resp.text();
     }
-    setProgress(60, 'Procesando…');
+    setProgress(55, 'Escrituras recibidas…');
 
     // 3. Descifrar en memoria
     const encBytes = b64ToBytes(encText.trim());
-    encText = null; // liberar memoria inmediatamente
-    setProgress(80, 'Descifrado en progreso…');
+    encText = null; // liberar inmediatamente
 
-    // Pequeno delay para que el browser respire
-    await new Promise(r => setTimeout(r, 50));
+    setProgress(75, 'Procesando…');
+    await new Promise(r => setTimeout(r, 30)); // respiro para el browser
 
     const decBytes = xorDecrypt(encBytes, KEY_BYTES);
-    setProgress(95, 'Abriendo…');
+    setProgress(92, 'Preparando…');
 
     const html = new TextDecoder('utf-8').decode(decBytes);
-
-    // 4. Render
     setProgress(100, '');
-    await new Promise(r => setTimeout(r, 200));
-    renderInFrame(html);
+
+    // 4. Render completo
+    await new Promise(r => setTimeout(r, 250));
+    renderPage(html);
   }
 
-  // ── Bloquear clic derecho e inspección ──
+  // ── Bloquear inspector y clic derecho en el loader ──
   document.addEventListener('contextmenu', e => e.preventDefault());
   document.addEventListener('keydown', e => {
     if (
@@ -233,11 +219,11 @@
       (e.ctrlKey && e.key === 'U') ||
       (e.metaKey && e.altKey && e.key === 'I')
     ) { e.preventDefault(); e.stopPropagation(); }
-  });
+  }, true);
 
   init().catch(err => {
-    status.textContent = 'Error: ' + err.message;
-    console.warn('Init error:', err);
+    status.textContent = '⚠ ' + err.message;
+    console.warn('Error al cargar:', err);
   });
 
 })();
