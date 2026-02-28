@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Santa Biblia 1909 — IA</title>
+<title>Santa Biblia — IA</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#b8860b">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -278,7 +278,7 @@ body {
 
   <div class="hdr">
     <div class="cross-wrap"><span class="cross-icon">✝</span></div>
-    <div class="hdr-title">Santa Biblia 1909</div>
+    <div class="hdr-title">Santa Biblia</div>
     <div class="hdr-sub">Con Agente de Inteligencia Artificial</div>
   </div>
 
@@ -293,30 +293,24 @@ body {
     </div>
   </div>
 
-  <!-- Key OpenRouter -->
+  
   <div class="field">
-    <label>API Key — OpenRouter <small style="opacity:.6;font-size:9px">(IA del texto)</small></label>
+    <label>Clave IA de Texto</label>
     <div class="field-wrap">
-      <input type="password" id="f-or" placeholder="sk-or-v1-…" autocomplete="off" maxlength="120">
+      <input type="password" id="f-or" placeholder="Clave IA de Texto…" autocomplete="off" maxlength="120">
       <button class="eye-btn" type="button" onclick="toggleEye('f-or',this)" tabindex="-1">👁</button>
     </div>
-    <div class="hint">
-      <span>🔑</span>
-      Gratis en <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a>
-    </div>
+    
   </div>
 
-  <!-- Key AI Horde -->
+  
   <div class="field">
-    <label>API Key — AI Horde <small style="opacity:.6;font-size:9px">(generación de imágenes)</small></label>
+    <label>Clave IA de Imágenes</label>
     <div class="field-wrap">
-      <input type="password" id="f-horde" placeholder="Tu key de AI Horde…" autocomplete="off" maxlength="80">
+      <input type="password" id="f-horde" placeholder="Clave IA de Imágenes…" autocomplete="off" maxlength="80">
       <button class="eye-btn" type="button" onclick="toggleEye('f-horde',this)" tabindex="-1">👁</button>
     </div>
-    <div class="hint">
-      <span>🎨</span>
-      Gratis en <a href="https://aihorde.net/register" target="_blank" rel="noopener">aihorde.net/register</a>
-    </div>
+    
   </div>
 
   <div id="msg" class="info"></div>
@@ -378,7 +372,7 @@ function setBusy(b){
   spin.style.display=b?'block':'none';
 }
 
-// ── Validación OpenRouter ──
+
 async function checkOR(key){
   try{
     var r=await fetch('https://openrouter.ai/api/v1/models',{
@@ -388,7 +382,7 @@ async function checkOR(key){
   }catch(e){ return false; }
 }
 
-// ── Validación AI Horde ──
+
 async function checkHorde(key){
   try{
     var r=await fetch('https://aihorde.net/api/v2/find_user',{
@@ -415,13 +409,13 @@ async function doLogin(){
   }
   if(!orKey || !orKey.startsWith('sk-or')){
     setField('f-or','fail');
-    setMsg('La key de OpenRouter debe comenzar con sk-or-v1-…','err');
+    setMsg('La Clave IA de Texto no es válida','err');
     document.getElementById('f-or').focus();
     return;
   }
   if(!hKey || hKey.length < 4){
     setField('f-horde','fail');
-    setMsg('Introduce tu key de AI Horde','err');
+    setMsg('Introduce la Clave IA de Imágenes','err');
     document.getElementById('f-horde').focus();
     return;
   }
@@ -430,23 +424,23 @@ async function doLogin(){
   setField('f-or',''); setField('f-horde','');
   setBusy(true);
 
-  // ── Verificar OpenRouter ──
-  setMsg('Verificando key de OpenRouter…','info');
+  
+  setMsg('Verificando Clave IA de Texto…','info');
   var orOk = await checkOR(orKey);
   if(!orOk){
     setField('f-or','fail');
-    setMsg('❌ Key de OpenRouter inválida o sin conexión','err');
+    setMsg('❌ Clave IA de Texto inválida o sin conexión','err');
     setBusy(false);
     return;
   }
   setField('f-or','ok');
 
-  // ── Verificar AI Horde ──
-  setMsg('Verificando key de AI Horde…','info');
+  
+  setMsg('Verificando Clave IA de Imágenes…','info');
   var hOk = await checkHorde(hKey);
   if(!hOk){
     setField('f-horde','fail');
-    setMsg('❌ Key de AI Horde inválida o sin conexión','err');
+    setMsg('❌ Clave IA de Imágenes inválida o sin conexión','err');
     setBusy(false);
     return;
   }
@@ -548,20 +542,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&!document.getElementById('btn-enter').disabled) doLogin();
 });
 
-// ── Auto-login si ya tiene sesión válida ──
-(function(){
-  var user  = localStorage.getItem('biblia_username');
-  var orKey = localStorage.getItem('or_key_biblia');
-  var hKey  = localStorage.getItem('horde_key_biblia');
-  if(user && orKey && orKey.startsWith('sk-or') && hKey && hKey.length>4){
-    // Pre-rellenar campos y lanzar automáticamente
-    document.getElementById('f-user').value  = user;
-    document.getElementById('f-or').value    = orKey;
-    document.getElementById('f-horde').value = hKey;
-    setMsg('Sesión guardada. Verificando acceso…','info');
-    doLogin();
-  }
-})();
+
 </script>
 </body>
 </html>
