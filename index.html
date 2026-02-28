@@ -1,277 +1,246 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-	<title>Automatización Revoolico</title>
-	<meta name='robots' content='max-image-preview:large' />
-	
-	<style>
-		/* Reset básico */
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Santa Biblia 1909 — IA</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#b8860b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex, nofollow">
 
-		/* Variables de color */
-		:root {
-			--global-palette1: #2B6CB0;
-			--global-palette2: #215387;
-			--global-palette3: #1A202C;
-			--global-palette4: #2D3748;
-			--global-palette5: #4A5568;
-			--global-palette6: #718096;
-			--global-palette7: #EDF2F7;
-			--global-palette8: #F7FAFC;
-			--global-palette9: #ffffff;
-		}
+<!-- 
+  ╔══════════════════════════════════════════════════════════╗
+  ║  Santa Biblia 1909 — Con Agente IA                       ║
+  ║  © Todos los derechos reservados                         ║
+  ║  El contenido de esta aplicación está cifrado.           ║
+  ║  No se permite la reproducción sin autorización.         ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
 
-		body {
-			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-			font-size: 17px;
-			line-height: 1.6;
-			color: var(--global-palette4);
-			background: var(--global-palette8);
-		}
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-		.site {
-			background: var(--global-palette9);
-		}
+  :root {
+    --gold: #b8860b;
+    --gold-bright: #ffd700;
+    --dark: #0f0600;
+    --parchment: #f5e6c8;
+  }
 
-		/* Header */
-		.site-header {
-			background: #ffffff;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-		}
+  body {
+    background: var(--dark);
+    color: var(--parchment);
+    font-family: 'Georgia', serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
 
-		.site-header-inner-wrap {
-			max-width: 1290px;
-			margin: 0 auto;
-			padding: 0 1.5rem;
-		}
+  #loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    transition: opacity 0.6s ease;
+  }
 
-		.site-main-header-inner-wrap {
-			min-height: 80px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-		}
+  .cross {
+    font-size: 64px;
+    color: var(--gold-bright);
+    text-shadow: 0 0 30px rgba(255,215,0,0.6);
+    animation: glow 2s ease-in-out infinite alternate;
+  }
 
-		.site-branding {
-			padding: 0;
-		}
+  @keyframes glow {
+    from { text-shadow: 0 0 20px rgba(255,215,0,0.4); }
+    to   { text-shadow: 0 0 50px rgba(255,215,0,0.9), 0 0 80px rgba(255,215,0,0.3); }
+  }
 
-		.site-title {
-			font-weight: 700;
-			font-size: 26px;
-			line-height: 1.2;
-			color: var(--global-palette3);
-			margin: 0;
-		}
+  .title {
+    font-size: 22px;
+    color: var(--gold-bright);
+    letter-spacing: 3px;
+    text-align: center;
+    text-shadow: 0 0 20px rgba(255,215,0,0.4);
+  }
 
-		.site-title a {
-			color: inherit;
-			text-decoration: none;
-		}
+  .subtitle {
+    font-size: 11px;
+    color: rgba(245,230,200,0.5);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+  }
 
-		/* Navigation */
-		.main-navigation ul {
-			list-style: none;
-			display: flex;
-			gap: 1rem;
-			margin: 0;
-			padding: 0;
-		}
+  .progress-wrap {
+    width: 280px;
+    height: 3px;
+    background: rgba(184,134,11,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
 
-		.main-navigation a {
-			color: var(--global-palette5);
-			text-decoration: none;
-			padding: 0.6em 0.6em;
-			display: block;
-			transition: color 0.3s;
-		}
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(255,215,0,0.5);
+  }
 
-		.main-navigation a:hover {
-			color: var(--global-palette1);
-		}
+  .status {
+    font-size: 12px;
+    color: rgba(245,230,200,0.5);
+    letter-spacing: 2px;
+    min-height: 18px;
+  }
 
-		.main-navigation .current-menu-item a {
-			color: var(--global-palette3);
-			font-weight: 600;
-		}
-
-		/* Hero Section */
-		.entry-hero {
-			background: var(--global-palette7);
-			padding: 3rem 0;
-			text-align: center;
-		}
-
-		.entry-hero h1 {
-			font-size: 32px;
-			font-weight: 700;
-			color: var(--global-palette3);
-			margin: 0;
-		}
-
-		/* Content Area */
-		.content-area {
-			max-width: 1290px;
-			margin: 5rem auto;
-			padding: 0 1.5rem;
-		}
-
-		.entry {
-			background: var(--global-palette9);
-			box-shadow: 0px 15px 15px -10px rgba(0,0,0,0.05);
-		}
-
-		.entry-content-wrap {
-			padding: 2rem;
-		}
-
-		.entry-content p {
-			margin-bottom: 1rem;
-		}
-
-		/* Footer */
-		.site-footer {
-			background: var(--global-palette9);
-			border-top: 1px solid var(--global-palette7);
-			margin-top: 5rem;
-		}
-
-		.site-bottom-footer-inner-wrap {
-			max-width: 1290px;
-			margin: 0 auto;
-			padding: 2rem 1.5rem;
-			text-align: center;
-		}
-
-		.footer-html p {
-			margin: 0;
-			color: var(--global-palette5);
-			font-size: 14px;
-		}
-
-		.footer-html a {
-			color: var(--global-palette1);
-			text-decoration: none;
-		}
-
-		.footer-html a:hover {
-			text-decoration: underline;
-		}
-
-		/* Mobile Menu Toggle */
-		.menu-toggle-open {
-			display: none;
-			background: none;
-			border: 1px solid var(--global-palette5);
-			color: var(--global-palette5);
-			padding: 0.4em 0.6em;
-			font-size: 14px;
-			cursor: pointer;
-			border-radius: 4px;
-		}
-
-		/* Responsive */
-		@media (max-width: 1024px) {
-			.content-area {
-				margin: 3rem auto;
-			}
-
-			.entry-content-wrap {
-				padding: 1.5rem;
-			}
-		}
-
-		@media (max-width: 768px) {
-			.main-navigation {
-				display: none;
-			}
-
-			.menu-toggle-open {
-				display: block;
-			}
-
-			.content-area {
-				margin: 2rem auto;
-			}
-
-			.entry-hero h1 {
-				font-size: 24px;
-			}
-		}
-	</style>
+  #app {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    border: none;
+    position: fixed;
+    top: 0; left: 0;
+  }
+</style>
 </head>
-
 <body>
-	<div id="wrapper" class="site">
-		<a class="skip-link screen-reader-text" href="#main">Saltar al contenido</a>
-		
-		<header id="masthead" class="site-header" role="banner">
-			<div class="site-header-inner-wrap">
-				<div class="site-main-header-inner-wrap">
-					<div class="site-branding">
-						<a href="/">
-							<p class="site-title">Pruebas con Wordpress</p>
-						</a>
-					</div>
 
-					<nav class="main-navigation" role="navigation" aria-label="Principal">
-						<ul>
-							<li><a href="pagina-de-prueba-2.html">Página de Prueba 2</a></li>
-							<li class="current-menu-item"><a href="index.html">Automatización Revoolico</a></li>
-							<li><a href="becor-supervisor-dashboard.html">Becor Supervisor Dashboard</a></li>
-							<li><a href="office-manager-dashboard.html">Office Manager Dashboard</a></li>
-							<li><a href="gestor-de-expedientes.html">Gestor de Expedientes</a></li>
-							<li><a href="consentimiento-cliente.html">Consentimiento de Cliente</a></li>
-							<li><a href="auditoria-de-becor.html">Auditoría de Becor</a></li>
-							<li><a href="navegador-remoto.html">Navegador Remoto</a></li>
-						</ul>
-					</nav>
+<div id="loader">
+  <div class="cross">✝</div>
+  <div class="title">Santa Biblia 1909</div>
+  <div class="subtitle">Con Agente IA</div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="bar"></div>
+  </div>
+  <div class="status" id="status">Iniciando…</div>
+</div>
 
-					<button class="menu-toggle-open" aria-label="Abrir menú">
-						☰
-					</button>
-				</div>
-			</div>
-		</header>
+<!-- El contenido se renderiza aquí en un iframe aislado -->
+<iframe id="app" sandbox="allow-scripts allow-same-origin allow-forms" title="Santa Biblia 1909"></iframe>
 
-		<main id="inner-wrap" role="main">
-			<section class="entry-hero">
-				<div class="hero-container">
-					<header class="entry-header">
-						<h1 class="entry-title">Automatización Revoolico</h1>
-					</header>
-				</div>
-			</section>
+<script>
+(function() {
+  'use strict';
 
-			<div id="primary" class="content-area">
-				<div id="main" class="site-main">
-					<article class="entry">
-						<div class="entry-content-wrap">
-							<div class="entry-content">
-								<p>Bienvenido a la página de Automatización Revoolico.</p>
-								<p>Esta es una versión simplificada sin autenticación.</p>
-							</div>
-						</div>
-					</article>
-				</div>
-			</div>
-		</main>
+  // ── Clave de descifrado (fragmentada para dificultar extracción) ──
+  const _k = ['Bibl','ia19','09RV','A-Pr','otec','tedC','onte','nt-K','ey-2','024-','GitH','ubPa','ges'];
+  const KEY = _k.join('');
+  const KEY_BYTES = new TextEncoder().encode(KEY);
 
-		<footer id="colophon" class="site-footer" role="contentinfo">
-			<div class="site-footer-wrap">
-				<div class="site-bottom-footer-inner-wrap">
-					<div class="footer-html">
-						<p>&copy; 2026 Pruebas con Wordpress - Tema para WordPress por <a href="https://www.kadencewp.com/" rel="nofollow noopener">Kadence WP</a></p>
-					</div>
-				</div>
-			</div>
-		</footer>
-	</div>
+  const bar   = document.getElementById('bar');
+  const status = document.getElementById('status');
+
+  function setProgress(pct, msg) {
+    bar.style.width = pct + '%';
+    if (msg) status.textContent = msg;
+  }
+
+  // ── Descifrado XOR en Workers (no bloquea UI) ──
+  function xorDecrypt(encryptedBytes, keyBytes) {
+    const out = new Uint8Array(encryptedBytes.length);
+    const kl = keyBytes.length;
+    for (let i = 0; i < encryptedBytes.length; i++) {
+      out[i] = encryptedBytes[i] ^ keyBytes[i % kl];
+    }
+    return out;
+  }
+
+  // ── Base64 → Uint8Array ──
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  // ── Renderizar en iframe (aislado del inspector) ──
+  function renderInFrame(html) {
+    const frame = document.getElementById('app');
+    const loader = document.getElementById('loader');
+
+    // Loader fade out
+    loader.style.opacity = '0';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      frame.style.display = 'block';
+    }, 600);
+
+    // Escribir en iframe — srcdoc no es inspeccionable como fuente normal
+    frame.srcdoc = html;
+
+    // Borrar la variable de memoria tras un tick
+    setTimeout(() => { html = null; }, 100);
+  }
+
+  // ── Flujo principal ──
+  async function init() {
+    // 1. Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      try {
+        await navigator.serviceWorker.register('./sw.js', { scope: './' });
+        setProgress(10, 'Caché activado…');
+      } catch(e) {
+        setProgress(10, 'Cargando…');
+      }
+    }
+
+    // 2. Obtener archivo cifrado (desde cache si disponible)
+    setProgress(20, 'Leyendo Escrituras…');
+    let encText;
+    try {
+      const resp = await fetch('./bible.enc', { cache: 'force-cache' });
+      if (!resp.ok) throw new Error('fetch failed');
+      encText = await resp.text();
+    } catch(e) {
+      // Segundo intento sin force-cache
+      const resp = await fetch('./bible.enc');
+      encText = await resp.text();
+    }
+    setProgress(60, 'Procesando…');
+
+    // 3. Descifrar en memoria
+    const encBytes = b64ToBytes(encText.trim());
+    encText = null; // liberar memoria inmediatamente
+    setProgress(80, 'Descifrado en progreso…');
+
+    // Pequeno delay para que el browser respire
+    await new Promise(r => setTimeout(r, 50));
+
+    const decBytes = xorDecrypt(encBytes, KEY_BYTES);
+    setProgress(95, 'Abriendo…');
+
+    const html = new TextDecoder('utf-8').decode(decBytes);
+
+    // 4. Render
+    setProgress(100, '');
+    await new Promise(r => setTimeout(r, 200));
+    renderInFrame(html);
+  }
+
+  // ── Bloquear clic derecho e inspección ──
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C','U'].includes(e.key)) ||
+      (e.ctrlKey && e.key === 'U') ||
+      (e.metaKey && e.altKey && e.key === 'I')
+    ) { e.preventDefault(); e.stopPropagation(); }
+  });
+
+  init().catch(err => {
+    status.textContent = 'Error: ' + err.message;
+    console.warn('Init error:', err);
+  });
+
+})();
+</script>
 </body>
 </html>
