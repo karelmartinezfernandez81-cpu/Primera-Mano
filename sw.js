@@ -1,64 +1,77 @@
-/* ══ Santa Biblia 1909 SW v5 ══
-   El token de auth vive dentro del caché del SW.
-   URL sintética: /_bsa_auth_  (nunca sale a la red)      */
+/* Santa Biblia 1909 SW v6
+   Dos cachés separados:
+     bsa-shell  → assets estáticos (index.html, sw.js, manifest.json)
+     bsa-vault  → token cifrado (/_tok_) + contenido cifrado (/_cnt_)
+   El contenido bíblico vive cifrado en bsa-vault para siempre.       */
 
-const CACHE_ASSETS = 'bsa-assets-v5';
-const CACHE_AUTH   = 'bsa-auth-v5';
-const AUTH_URL     = '/_bsa_auth_';
-const PRECACHE     = ['./', './index.html', './bible.enc', './manifest.json'];
+const V           = 'v6';
+const SHELL_CACHE = 'bsa-shell-' + V;
+const VAULT_CACHE = 'bsa-vault-' + V;
+const TOK_URL     = '/_tok_';   /* token de auth cifrado     */
+const CNT_URL     = '/_cnt_';   /* HTML bíblico re-cifrado   */
+const SHELL_FILES = ['./', './index.html', './sw.js', './manifest.json'];
 
-/* ── Install: cachear assets + activar sin esperar ── */
+/* ─── Install ─── */
 self.addEventListener('install', e => {
   self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE_ASSETS).then(c => c.addAll(PRECACHE)).catch(()=>{})
+    caches.open(SHELL_CACHE)
+      .then(c => c.addAll(SHELL_FILES))
+      .catch(() => {})
   );
 });
 
-/* ── Activate: borrar cachés viejos, tomar control inmediato ── */
+/* ─── Activate ─── */
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys()
-      .then(ks => Promise.all(
-        ks.filter(k => k!==CACHE_ASSETS && k!==CACHE_AUTH).map(k=>caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== SHELL_CACHE && k !== VAULT_CACHE)
+            .map(k => caches.delete(k))
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-/* ── Messages desde la página ── */
+/* ─── Messages ─── */
 self.addEventListener('message', async e => {
-  /* Guardar token cifrado en el caché de auth */
-  if (e.data && e.data.type === 'SAVE_AUTH') {
-    const cache = await caches.open(CACHE_AUTH);
-    const res   = new Response(
-      JSON.stringify({ tok: e.data.tok, ts: Date.now() }),
-      { headers: { 'Content-Type': 'application/json', 'X-BSA': '1' } }
-    );
-    await cache.put(AUTH_URL, res);
-    /* Responder confirmación */
-    if (e.source) e.source.postMessage({ type: 'AUTH_SAVED', ok: true });
+  const { type, data } = e.data || {};
+
+  /* Guardar token en vault */
+  if (type === 'SAVE_TOK') {
+    const c = await caches.open(VAULT_CACHE);
+    await c.put(TOK_URL, new Response(data, {
+      headers: { 'Content-Type': 'text/plain', 'X-BSA': '1' }
+    }));
+    e.source && e.source.postMessage({ type: 'TOK_SAVED' });
     return;
   }
-  /* Borrar token */
-  if (e.data && e.data.type === 'CLEAR_AUTH') {
-    const cache = await caches.open(CACHE_AUTH);
-    await cache.delete(AUTH_URL);
+
+  /* Guardar contenido bíblico cifrado en vault */
+  if (type === 'SAVE_CNT') {
+    const c = await caches.open(VAULT_CACHE);
+    await c.put(CNT_URL, new Response(data, {
+      headers: { 'Content-Type': 'text/plain', 'X-BSA': '1' }
+    }));
+    e.source && e.source.postMessage({ type: 'CNT_SAVED' });
     return;
   }
-  /* Skip waiting */
-  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+
+  if (type === 'SKIP_WAITING') self.skipWaiting();
 });
 
-/* ── Fetch ── */
+/* ─── Fetch ─── */
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
+  const path = new URL(e.request.url).pathname;
 
-  /* URL sintética de auth — servir desde caché de auth */
-  if (url.pathname === AUTH_URL || url.pathname.endsWith(AUTH_URL)) {
+  /* Rutas del vault → servir desde bsa-vault */
+  if (path === TOK_URL || path === CNT_URL ||
+      path.endsWith(TOK_URL) || path.endsWith(CNT_URL)) {
     e.respondWith(
-      caches.open(CACHE_AUTH).then(c => c.match(AUTH_URL)).then(r =>
-        r ? r : new Response('null', { status: 200, headers: {'Content-Type':'application/json'} })
+      caches.open(VAULT_CACHE).then(c => c.match(
+        path === TOK_URL || path.endsWith(TOK_URL) ? TOK_URL : CNT_URL
+      )).then(r =>
+        r || new Response('', { status: 204 })
       )
     );
     return;
@@ -67,18 +80,17 @@ self.addEventListener('fetch', e => {
   /* No interceptar peticiones externas */
   if (!e.request.url.startsWith(self.location.origin)) return;
 
-  /* Cache-first para assets */
+  /* Shell → cache-first */
   e.respondWith(
     caches.match(e.request).then(hit => {
       if (hit) return hit;
       return fetch(e.request).then(res => {
         if (!res || res.status !== 200) return res;
-        const clone = res.clone();
-        caches.open(CACHE_ASSETS).then(c => c.put(e.request, clone));
+        caches.open(SHELL_CACHE).then(c => c.put(e.request, res.clone()));
         return res;
-      }).catch(() => {
-        if (e.request.mode === 'navigate') return caches.match('./index.html');
-      });
+      }).catch(() =>
+        e.request.mode === 'navigate' ? caches.match('./index.html') : undefined
+      );
     })
   );
 });
