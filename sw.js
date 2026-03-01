@@ -1,96 +1,60 @@
-/* Santa Biblia 1909 SW v6
-   Dos cachés separados:
-     bsa-shell  → assets estáticos (index.html, sw.js, manifest.json)
-     bsa-vault  → token cifrado (/_tok_) + contenido cifrado (/_cnt_)
-   El contenido bíblico vive cifrado en bsa-vault para siempre.       */
-
-const V           = 'v6';
-const SHELL_CACHE = 'bsa-shell-' + V;
-const VAULT_CACHE = 'bsa-vault-' + V;
-const TOK_URL     = '/_tok_';   /* token de auth cifrado     */
-const CNT_URL     = '/_cnt_';   /* HTML bíblico re-cifrado   */
+/* Santa Biblia 1909 SW v7 */
+const SHELL = 'bsa-shell-v7';
+const VAULT = 'bsa-vault-v7';
+const T_URL = '/_tok_';
+const C_URL = '/_cnt_';
 const SHELL_FILES = ['./', './index.html', './sw.js', './manifest.json'];
 
-/* ─── Install ─── */
 self.addEventListener('install', e => {
   self.skipWaiting();
-  e.waitUntil(
-    caches.open(SHELL_CACHE)
-      .then(c => c.addAll(SHELL_FILES))
-      .catch(() => {})
-  );
+  e.waitUntil(caches.open(SHELL).then(c => c.addAll(SHELL_FILES)).catch(()=>{}));
 });
 
-/* ─── Activate ─── */
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(k => k !== SHELL_CACHE && k !== VAULT_CACHE)
-            .map(k => caches.delete(k))
-      )
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(ks => Promise.all(ks.filter(k=>k!==SHELL&&k!==VAULT).map(k=>caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-/* ─── Messages ─── */
 self.addEventListener('message', async e => {
-  const { type, data } = e.data || {};
-
-  /* Guardar token en vault */
-  if (type === 'SAVE_TOK') {
-    const c = await caches.open(VAULT_CACHE);
-    await c.put(TOK_URL, new Response(data, {
-      headers: { 'Content-Type': 'text/plain', 'X-BSA': '1' }
-    }));
-    e.source && e.source.postMessage({ type: 'TOK_SAVED' });
+  const d = e.data || {};
+  if (d.type === 'SAVE_TOK') {
+    const c = await caches.open(VAULT);
+    await c.put(T_URL, new Response(d.data, {headers:{'Content-Type':'text/plain'}}));
+    if(e.source) e.source.postMessage({type:'TOK_OK'});
     return;
   }
-
-  /* Guardar contenido bíblico cifrado en vault */
-  if (type === 'SAVE_CNT') {
-    const c = await caches.open(VAULT_CACHE);
-    await c.put(CNT_URL, new Response(data, {
-      headers: { 'Content-Type': 'text/plain', 'X-BSA': '1' }
-    }));
-    e.source && e.source.postMessage({ type: 'CNT_SAVED' });
+  if (d.type === 'SAVE_CNT') {
+    const c = await caches.open(VAULT);
+    await c.put(C_URL, new Response(d.data, {headers:{'Content-Type':'text/plain'}}));
+    if(e.source) e.source.postMessage({type:'CNT_OK'});
     return;
   }
-
-  if (type === 'SKIP_WAITING') self.skipWaiting();
+  if (d.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
-/* ─── Fetch ─── */
 self.addEventListener('fetch', e => {
-  const path = new URL(e.request.url).pathname;
-
-  /* Rutas del vault → servir desde bsa-vault */
-  if (path === TOK_URL || path === CNT_URL ||
-      path.endsWith(TOK_URL) || path.endsWith(CNT_URL)) {
+  const u = new URL(e.request.url);
+  const p = u.pathname;
+  if (p.endsWith(T_URL) || p.endsWith(C_URL) || p===T_URL || p===C_URL) {
+    const key = (p.endsWith(T_URL)||p===T_URL) ? T_URL : C_URL;
     e.respondWith(
-      caches.open(VAULT_CACHE).then(c => c.match(
-        path === TOK_URL || path.endsWith(TOK_URL) ? TOK_URL : CNT_URL
-      )).then(r =>
-        r || new Response('', { status: 204 })
+      caches.open(VAULT).then(c=>c.match(key)).then(r=>
+        r ? r : new Response('', {status:204})
       )
     );
     return;
   }
-
-  /* No interceptar peticiones externas */
   if (!e.request.url.startsWith(self.location.origin)) return;
-
-  /* Shell → cache-first */
   e.respondWith(
     caches.match(e.request).then(hit => {
       if (hit) return hit;
       return fetch(e.request).then(res => {
-        if (!res || res.status !== 200) return res;
-        caches.open(SHELL_CACHE).then(c => c.put(e.request, res.clone()));
+        if(res && res.status===200) caches.open(SHELL).then(c=>c.put(e.request, res.clone()));
         return res;
-      }).catch(() =>
-        e.request.mode === 'navigate' ? caches.match('./index.html') : undefined
-      );
+      }).catch(() => e.request.mode==='navigate' ? caches.match('./index.html') : undefined);
     })
   );
 });
