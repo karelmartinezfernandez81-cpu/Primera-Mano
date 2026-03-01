@@ -1,51 +1,45 @@
-/* ============================================================
-   SERVICE WORKER v3 — Santa Biblia 1909 IA
-   ============================================================ */
+/* ══ SERVICE WORKER v4 — Santa Biblia 1909 IA ══
+   Pre-cachea todo en install, incluyendo bible.enc
+   Sirve 100% offline en visitas siguientes          */
 
-const CACHE_NAME = 'biblia-1909-v3';
-const ASSETS = [
-  './',
-  './index.html',
-  './bible.enc',
-  './manifest.json'
-];
+const CACHE = 'bsa-v4';
+const PRECACHE = ['./', './index.html', './bible.enc', './manifest.json'];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting())
+/* ── Install: cachear TODO antes de activar ── */
+self.addEventListener('install', e => {
+  self.skipWaiting();          /* activar sin esperar tab viejo */
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(PRECACHE)).catch(() => {})
   );
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
+/* ── Activate: borrar cachés viejos y tomar control ── */
+self.addEventListener('activate', e => {
+  e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
+      .then(ks => Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
+      .then(() => self.clients.claim())   /* controlar tabs abiertos ya */
   );
 });
 
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
-self.addEventListener('fetch', event => {
-  if (!event.request.url.startsWith(self.location.origin)) return;
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(response => {
-        if (!response || response.status !== 200 || response.type !== 'basic') return response;
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
+/* ── Fetch: cache-first, red como fallback ── */
+self.addEventListener('fetch', e => {
+  if (!e.request.url.startsWith(self.location.origin)) return;
+  e.respondWith(
+    caches.match(e.request).then(hit => {
+      if (hit) return hit;          /* sirve desde caché */
+      return fetch(e.request).then(res => {
+        if (!res || res.status !== 200) return res;
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
       }).catch(() => {
-        if (event.request.mode === 'navigate') return caches.match('./index.html');
+        /* Sin red y sin caché: para navigate devolver index */
+        if (e.request.mode === 'navigate') return caches.match('./index.html');
       });
     })
   );
