@@ -7,323 +7,327 @@
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#b8860b">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --gold: #b8860b;
-  --gold-light: #d4a017;
-  --gold-bright: #ffd700;
-  --dark: #0a0400;
-  --dark2: #130800;
-  --dark3: #1c0d05;
-  --parchment: #f5e6c8;
-  --parchment-dim: rgba(245,230,200,0.55);
-  --crimson: #6b0f0f;
-  --red-err: #e05555;
-  --green-ok: #4caf50;
-  --border: rgba(184,134,11,0.35);
+/* ══════════════════════════ VARIABLES ══════════════════════════ */
+:root{
+  --gold:#b8860b;--gold-l:#d4a017;--gold-b:#ffd700;
+  --dark:#0a0400;--dark2:#130800;--dark3:#1c0d05;
+  --parch:#f5e6c8;--parch-d:rgba(245,230,200,.55);
+  --border:rgba(184,134,11,.35);
+  --red:#e05555;--green:#4caf50;--blue:#5b9bd5;
+  --admin-bg:#070310;--admin-border:rgba(91,155,213,.3);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--dark);
-  color: var(--parchment);
-  font-family: 'Crimson Text', Georgia, serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--dark);color:var(--parch);font-family:'Crimson Text',Georgia,serif;min-height:100vh;overflow-x:hidden}
 
 /* ── Fondo animado ── */
-.bg {
-  position: fixed; inset: 0; z-index: 0; overflow: hidden;
-  background: radial-gradient(ellipse at 50% 0%, #2a1200 0%, #0a0400 60%);
-}
-.bg-ray {
-  position: absolute; top: -20%; left: 50%; width: 1px;
-  transform-origin: top center;
-  background: linear-gradient(to bottom, rgba(212,160,23,0.18), transparent);
-  animation: ray 8s ease-in-out infinite;
-}
-.bg-ray:nth-child(1){ height:70vh; transform:rotate(-30deg); animation-delay:0s; }
-.bg-ray:nth-child(2){ height:55vh; transform:rotate(-10deg); animation-delay:1.5s; opacity:.7; }
-.bg-ray:nth-child(3){ height:65vh; transform:rotate(15deg);  animation-delay:3s; }
-.bg-ray:nth-child(4){ height:45vh; transform:rotate(35deg);  animation-delay:4.5s; opacity:.5; }
-@keyframes ray { 0%,100%{opacity:.3} 50%{opacity:.8} }
+.bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 0%,#2a1200,#0a0400 60%)}
+.bg-ray{position:absolute;top:-20%;left:50%;width:1px;transform-origin:top center;background:linear-gradient(to bottom,rgba(212,160,23,.18),transparent);animation:ray 8s ease-in-out infinite}
+.bg-ray:nth-child(1){height:70vh;transform:rotate(-30deg);animation-delay:0s}
+.bg-ray:nth-child(2){height:55vh;transform:rotate(-10deg);animation-delay:1.5s;opacity:.7}
+.bg-ray:nth-child(3){height:65vh;transform:rotate(15deg);animation-delay:3s}
+.bg-ray:nth-child(4){height:45vh;transform:rotate(35deg);animation-delay:4.5s;opacity:.5}
+@keyframes ray{0%,100%{opacity:.3}50%{opacity:.8}}
+.particles{position:absolute;inset:0}
+.p{position:absolute;border-radius:50%;background:var(--gold-b);animation:float linear infinite;opacity:0}
+@keyframes float{0%{transform:translateY(100vh) scale(1);opacity:0}10%{opacity:.6}90%{opacity:.3}100%{transform:translateY(-10vh) scale(.3);opacity:0}}
 
-.particles {
-  position: absolute; inset: 0;
-}
-.p { position: absolute; border-radius: 50%; background: var(--gold-bright); animation: float linear infinite; opacity: 0; }
+/* ══════════════════════════ LOGIN SCREEN ══════════════════════════ */
+#s-login{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 
-@keyframes float {
-  0%   { transform: translateY(100vh) scale(1); opacity: 0; }
-  10%  { opacity: .6; }
-  90%  { opacity: .3; }
-  100% { transform: translateY(-10vh) scale(0.3); opacity: 0; }
-}
+.card{width:min(420px,94vw);background:linear-gradient(160deg,#1a0a02,#120700,#1e0e04);border:1px solid var(--border);border-radius:16px;padding:38px 34px 32px;box-shadow:0 0 60px rgba(184,134,11,.15),0 0 120px rgba(0,0,0,.8);animation:cardIn .6s ease both;position:relative}
+.card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--gold-b),transparent);border-radius:2px}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
 
-/* ── Card ── */
-.card {
-  position: relative; z-index: 10;
-  width: min(420px, 94vw);
-  background: linear-gradient(160deg, #1a0a02, #120700, #1e0e04);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 40px 36px 36px;
-  box-shadow: 0 0 60px rgba(184,134,11,.15), 0 0 120px rgba(0,0,0,.8);
-  animation: cardIn .6s ease both;
-}
-@keyframes cardIn {
-  from { opacity:0; transform: translateY(24px) scale(.97); }
-  to   { opacity:1; transform: translateY(0)    scale(1); }
-}
+.hdr{text-align:center;margin-bottom:28px}
+.cross-wrap{width:60px;height:60px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:radial-gradient(circle,rgba(184,134,11,.25),transparent 70%);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,.3)}50%{box-shadow:0 0 0 18px rgba(255,215,0,0)}}
+.cross-icon{font-size:36px;filter:drop-shadow(0 0 12px rgba(255,215,0,.8))}
+.hdr-title{font-family:'Cinzel Decorative',serif;font-size:16px;color:var(--gold-b);letter-spacing:1px;text-shadow:0 0 20px rgba(255,215,0,.4)}
+.hdr-sub{font-family:'Cinzel',serif;font-size:9px;letter-spacing:4px;color:var(--parch-d);margin-top:5px;text-transform:uppercase}
 
-/* Borde dorado superior */
-.card::before {
-  content: '';
-  position: absolute; top: 0; left: 10%; right: 10%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
-  border-radius: 2px;
-}
+.divider{display:flex;align-items:center;gap:10px;margin-bottom:22px;color:rgba(184,134,11,.4);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(184,134,11,.4),transparent)}
 
-/* ── Header ── */
-.hdr { text-align: center; margin-bottom: 32px; }
+.field{margin-bottom:16px}
+.field label{display:block;font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:2px;color:var(--gold-l);text-transform:uppercase;margin-bottom:7px}
+.field-wrap{position:relative}
+.field input{width:100%;background:rgba(245,230,200,.05);border:1px solid var(--border);border-radius:8px;padding:10px 40px 10px 13px;color:var(--parch);font-family:'Crimson Text',serif;font-size:15px;outline:none;transition:all .25s;-webkit-appearance:none}
+.field input::placeholder{color:rgba(245,230,200,.22);font-style:italic}
+.field input:focus{border-color:rgba(212,160,23,.7);background:rgba(245,230,200,.08);box-shadow:0 0 0 3px rgba(184,134,11,.12)}
+.field input.ok{border-color:var(--green)!important}
+.field input.fail{border-color:var(--red)!important}
+.eye-btn{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--parch-d);cursor:pointer;font-size:15px;padding:2px;line-height:1;transition:color .2s}
+.eye-btn:hover{color:var(--gold)}
 
-.cross-wrap {
-  width: 64px; height: 64px;
-  margin: 0 auto 16px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(184,134,11,.25) 0%, transparent 70%);
-  animation: pulse 3s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,.3)} 50%{box-shadow:0 0 0 18px rgba(255,215,0,0)} }
+#msg{min-height:19px;text-align:center;font-size:12.5px;letter-spacing:.5px;margin-bottom:14px;transition:all .3s;padding:0 4px}
+#msg.err{color:var(--red)}#msg.ok{color:var(--green)}#msg.info{color:var(--parch-d)}
 
-.cross-icon { font-size: 40px; filter: drop-shadow(0 0 12px rgba(255,215,0,.8)); }
+.btn-enter{width:100%;padding:12px;background:linear-gradient(135deg,#8a6200,var(--gold),#8a6200);background-size:200% 100%;border:none;border-radius:8px;color:#1a0800;font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:3px;cursor:pointer;transition:all .3s;overflow:hidden}
+.btn-enter:hover{background-position:100% 0;box-shadow:0 4px 20px rgba(212,160,23,.45)}
+.btn-enter:active{transform:scale(.98)}
+.btn-enter:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-txt{display:block}
+.btn-spin{display:none;width:16px;height:16px;border:2px solid rgba(26,8,0,.3);border-top-color:#1a0800;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.hdr-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 17px;
-  color: var(--gold-bright);
-  letter-spacing: 1px;
-  text-shadow: 0 0 20px rgba(255,215,0,.4);
-}
-.hdr-sub {
-  font-family: 'Cinzel', serif;
-  font-size: 9px;
-  letter-spacing: 4px;
-  color: var(--parchment-dim);
-  margin-top: 6px;
-  text-transform: uppercase;
-}
+/* ══════════════════════════ CHAT WIDGET ══════════════════════════ */
+#chat-fab{position:fixed;bottom:24px;right:24px;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--dark3),#2a1200);border:1.5px solid var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 20px rgba(184,134,11,.3);transition:all .3s;animation:chatPop .4s ease both}
+@keyframes chatPop{from{transform:scale(0)}to{transform:scale(1)}}
+#chat-fab:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(184,134,11,.5)}
+#chat-fab .chat-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:10px;font-family:'Cinzel',serif;width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;font-weight:700}
 
-/* ── Separador ── */
-.divider {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 28px; color: rgba(184,134,11,.4); font-size: 12px;
-}
-.divider::before, .divider::after {
-  content: ''; flex: 1; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(184,134,11,.4), transparent);
-}
+#chat-panel{position:fixed;bottom:88px;right:24px;z-index:200;width:min(320px,90vw);height:420px;background:linear-gradient(160deg,#120800,#0e0500);border:1px solid var(--border);border-radius:14px;display:none;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.7);animation:chatSlide .3s ease both;overflow:hidden}
+@keyframes chatSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.chat-hdr{padding:12px 14px;background:rgba(184,134,11,.1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.chat-hdr-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold-b)}
+.chat-hdr-sub{font-size:10px;color:var(--parch-d)}
+#chat-close{background:none;border:none;color:var(--parch-d);font-size:18px;cursor:pointer;padding:0;line-height:1;transition:color .2s}
+#chat-close:hover{color:var(--gold)}
 
-/* ── Campos ── */
-.field { margin-bottom: 18px; }
-.field label {
-  display: block;
-  font-family: 'Cinzel', serif;
-  font-size: 9.5px;
-  letter-spacing: 2px;
-  color: var(--gold-light);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.field-wrap { position: relative; }
-.field input {
-  width: 100%;
-  background: rgba(245,230,200,.05);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 11px 42px 11px 14px;
-  color: var(--parchment);
-  font-family: 'Crimson Text', serif;
-  font-size: 15px;
-  outline: none;
-  transition: all .25s;
-  -webkit-appearance: none;
-}
-.field input::placeholder { color: rgba(245,230,200,.25); font-style: italic; }
-.field input:focus {
-  border-color: rgba(212,160,23,.7);
-  background: rgba(245,230,200,.08);
-  box-shadow: 0 0 0 3px rgba(184,134,11,.12);
-}
-.field input.ok   { border-color: var(--green-ok) !important; }
-.field input.fail { border-color: var(--red-err) !important; }
+#chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+#chat-msgs::-webkit-scrollbar{width:4px}
+#chat-msgs::-webkit-scrollbar-thumb{background:rgba(184,134,11,.3);border-radius:2px}
+.msg-bubble{max-width:82%;padding:7px 11px;border-radius:10px;font-size:13px;line-height:1.4;word-break:break-word}
+.msg-mine{align-self:flex-end;background:rgba(184,134,11,.2);border:1px solid rgba(184,134,11,.3);color:var(--parch)}
+.msg-admin{align-self:flex-start;background:rgba(91,155,213,.15);border:1px solid rgba(91,155,213,.3);color:#b8d4f0}
+.msg-from{font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;opacity:.6;margin-bottom:3px}
+.msg-time{font-size:9px;opacity:.4;margin-top:3px;text-align:right}
+.chat-empty{text-align:center;color:var(--parch-d);font-size:12px;font-style:italic;padding:20px;opacity:.5}
 
-/* Icono estado */
-.field-icon {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  font-size: 16px; pointer-events: none;
-  transition: opacity .2s;
-}
-.hint {
-  font-size: 11px; color: rgba(245,230,200,.3);
-  margin-top: 5px; padding-left: 2px;
-  font-style: italic;
-  display: flex; align-items: center; gap: 5px;
-}
-.hint a { color: var(--gold); text-decoration: none; }
-.hint a:hover { text-decoration: underline; }
+.chat-inp-row{padding:10px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+#chat-input{flex:1;background:rgba(245,230,200,.05);border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:var(--parch);font-family:'Crimson Text',serif;font-size:14px;outline:none;resize:none}
+#chat-input:focus{border-color:rgba(184,134,11,.6)}
+#chat-send{background:var(--gold);border:none;border-radius:8px;width:36px;color:#1a0800;font-size:16px;cursor:pointer;transition:all .2s;flex-shrink:0}
+#chat-send:hover{background:var(--gold-b)}
 
-/* ── Mensaje de estado ── */
-#msg {
-  min-height: 20px;
-  text-align: center;
-  font-size: 12.5px;
-  letter-spacing: .5px;
-  margin-bottom: 16px;
-  transition: all .3s;
-  padding: 0 4px;
-}
-#msg.err  { color: var(--red-err); }
-#msg.ok   { color: var(--green-ok); }
-#msg.info { color: var(--parchment-dim); }
+/* ══════════════════════════ ADMIN PANEL ══════════════════════════ */
+#s-admin{display:none;min-height:100vh;background:linear-gradient(160deg,#070310,#0a0520,#050208);position:relative;z-index:10}
+.adm-topbar{background:rgba(91,155,213,.08);border-bottom:1px solid var(--admin-border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.adm-logo{font-family:'Cinzel Decorative',serif;font-size:14px;color:#7fb3e0;letter-spacing:1px}
+.adm-logo span{display:block;font-size:8px;font-family:'Cinzel',serif;letter-spacing:3px;color:rgba(127,179,224,.5);margin-top:2px}
+.adm-logout{background:rgba(224,85,85,.15);border:1px solid rgba(224,85,85,.3);border-radius:6px;padding:6px 14px;color:#e08888;font-family:'Cinzel',serif;font-size:10px;letter-spacing:1.5px;cursor:pointer;transition:all .2s}
+.adm-logout:hover{background:rgba(224,85,85,.3)}
 
-/* ── Botón ── */
-.btn-enter {
-  width: 100%;
-  padding: 13px;
-  background: linear-gradient(135deg, #8a6200, var(--gold), #8a6200);
-  background-size: 200% 100%;
-  border: none;
-  border-radius: 8px;
-  color: #1a0800;
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  cursor: pointer;
-  transition: all .3s;
-  position: relative;
-  overflow: hidden;
-}
-.btn-enter:hover { background-position: 100% 0; box-shadow: 0 4px 20px rgba(212,160,23,.45); }
-.btn-enter:active { transform: scale(.98); }
-.btn-enter:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.adm-body{padding:24px;max-width:1100px;margin:0 auto}
+.adm-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+@media(max-width:750px){.adm-grid{grid-template-columns:1fr}}
 
-.btn-enter .btn-spinner {
-  display: none;
-  width: 16px; height: 16px;
-  border: 2px solid rgba(26,8,0,.3);
-  border-top-color: #1a0800;
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-  margin: 0 auto;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+.adm-card{background:rgba(91,155,213,.05);border:1px solid var(--admin-border);border-radius:12px;overflow:hidden}
+.adm-card-hdr{padding:14px 18px;background:rgba(91,155,213,.08);border-bottom:1px solid var(--admin-border);font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:#7fb3e0;display:flex;align-items:center;justify-content:space-between}
+.adm-card-hdr .badge{background:rgba(91,155,213,.2);border-radius:20px;padding:2px 10px;font-size:10px;color:#a0c8e8}
 
-/* ── Loading overlay (después de auth) ── */
-#loading {
-  display: none;
-  position: fixed; inset: 0; z-index: 100;
-  background: var(--dark);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-}
-#loading.show { display: flex; }
-.ld-cross { font-size: 60px; animation: glow 2s ease-in-out infinite alternate; }
-@keyframes glow {
-  from { text-shadow: 0 0 20px rgba(255,215,0,.4); }
-  to   { text-shadow: 0 0 50px rgba(255,215,0,.9), 0 0 80px rgba(255,215,0,.3); }
-}
-.ld-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 18px; color: var(--gold-bright);
-  letter-spacing: 2px; text-align: center;
-}
-.ld-pw { width: 260px; height: 2px; background: rgba(184,134,11,.2); border-radius: 2px; overflow: hidden; }
-#ld-bar { height: 100%; width: 0%; background: linear-gradient(90deg,var(--gold),var(--gold-bright)); transition: width .3s; box-shadow: 0 0 10px rgba(255,215,0,.5); }
-#ld-st { font-size: 11px; letter-spacing: 2px; color: var(--parchment-dim); }
+.adm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-box{background:rgba(91,155,213,.06);border:1px solid var(--admin-border);border-radius:10px;padding:14px;text-align:center}
+.stat-num{font-size:28px;color:#7fb3e0;font-family:'Cinzel',serif;line-height:1}
+.stat-lbl{font-size:10px;color:rgba(127,179,224,.5);letter-spacing:1px;margin-top:4px;font-family:'Cinzel',serif}
 
-/* Eye toggle */
-.eye-btn {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  background: none; border: none; color: var(--parchment-dim);
-  cursor: pointer; font-size: 16px; padding: 2px; line-height: 1;
-  transition: color .2s;
-}
-.eye-btn:hover { color: var(--gold); }
+/* User rows */
+.user-row{padding:14px 18px;border-bottom:1px solid rgba(91,155,213,.1);display:flex;align-items:center;gap:12px;transition:background .2s}
+.user-row:hover{background:rgba(91,155,213,.06)}
+.user-row:last-child{border-bottom:none}
+.user-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dot-online{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot-offline{background:rgba(127,179,224,.25)}
+.user-name{font-family:'Cinzel',serif;font-size:12px;color:#b0d0ec;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-meta{font-size:10px;color:rgba(127,179,224,.45);display:flex;flex-direction:column;gap:2px;text-align:right;flex-shrink:0}
+.login-count{font-size:10px;padding:1px 7px;border-radius:10px;font-family:'Cinzel',serif}
+.lc-warn{background:rgba(255,180,0,.15);color:#ffb400;border:1px solid rgba(255,180,0,.3)}
+.lc-ok{background:rgba(76,175,80,.12);color:#81c784;border:1px solid rgba(76,175,80,.2)}
+.user-actions{display:flex;gap:6px;flex-shrink:0}
+.adm-btn{border:none;border-radius:6px;padding:5px 10px;font-size:10px;font-family:'Cinzel',serif;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.adm-btn-kick{background:rgba(224,85,85,.15);color:#e08888;border:1px solid rgba(224,85,85,.3)}
+.adm-btn-kick:hover{background:rgba(224,85,85,.3)}
+.adm-btn-edit{background:rgba(184,134,11,.12);color:var(--gold-l);border:1px solid rgba(184,134,11,.25)}
+.adm-btn-edit:hover{background:rgba(184,134,11,.25)}
+.user-empty{padding:30px;text-align:center;color:rgba(127,179,224,.3);font-style:italic;font-size:13px}
+
+/* Admin chat */
+.adm-chat-msgs{height:280px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.adm-chat-msgs::-webkit-scrollbar{width:4px}
+.adm-chat-msgs::-webkit-scrollbar-thumb{background:var(--admin-border);border-radius:2px}
+.adm-msg{padding:7px 11px;border-radius:8px;font-size:12.5px;max-width:85%;word-break:break-word}
+.adm-msg-user{align-self:flex-start;background:rgba(245,230,200,.06);border:1px solid rgba(245,230,200,.1);color:var(--parch)}
+.adm-msg-admin-sent{align-self:flex-end;background:rgba(91,155,213,.15);border:1px solid var(--admin-border);color:#b8d4f0}
+.adm-msg-from{font-family:'Cinzel',serif;font-size:9px;opacity:.55;margin-bottom:2px;letter-spacing:.5px}
+.adm-chat-inp{padding:10px;border-top:1px solid var(--admin-border);display:flex;gap:8px}
+#adm-chat-to{background:rgba(91,155,213,.08);border:1px solid var(--admin-border);border-radius:6px;padding:6px 10px;color:#a0c8e8;font-size:11px;font-family:'Cinzel',serif;outline:none;flex:1}
+#adm-chat-to option{background:#070310}
+#adm-chat-msg{flex:1;background:rgba(91,155,213,.08);border:1px solid var(--admin-border);border-radius:8px;padding:7px 10px;color:var(--parch);font-size:13px;font-family:'Crimson Text',serif;outline:none}
+#adm-chat-send{background:var(--blue);border:none;border-radius:8px;width:36px;color:#fff;font-size:15px;cursor:pointer;transition:all .2s}
+#adm-chat-send:hover{filter:brightness(1.2)}
+
+/* Edit keys modal */
+#modal-edit{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);align-items:center;justify-content:center}
+#modal-edit.show{display:flex}
+.modal-box{background:linear-gradient(160deg,#0f0820,#070310);border:1px solid var(--admin-border);border-radius:14px;padding:28px;width:min(400px,90vw);box-shadow:0 0 60px rgba(91,155,213,.2)}
+.modal-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:#7fb3e0;margin-bottom:20px;text-align:center}
+.modal-field{margin-bottom:14px}
+.modal-field label{display:block;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;color:rgba(127,179,224,.7);text-transform:uppercase;margin-bottom:6px}
+.modal-field input{width:100%;background:rgba(91,155,213,.08);border:1px solid var(--admin-border);border-radius:7px;padding:9px 12px;color:var(--parch);font-size:14px;font-family:'Crimson Text',serif;outline:none}
+.modal-btns{display:flex;gap:10px;margin-top:20px}
+.modal-btns button{flex:1;padding:10px;border:none;border-radius:8px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.modal-save{background:var(--blue);color:#fff}
+.modal-save:hover{filter:brightness(1.2)}
+.modal-cancel{background:rgba(245,230,200,.07);color:var(--parch-d)}
+.modal-cancel:hover{background:rgba(245,230,200,.12)}
+
+/* Firebase setup banner */
+#fb-setup{display:none;background:rgba(255,180,0,.12);border:1px solid rgba(255,180,0,.35);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:12.5px;color:#ffc}
+#fb-setup input{width:100%;margin-top:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,180,0,.4);border-radius:6px;padding:7px 10px;color:#ffc;font-size:13px;font-family:monospace;outline:none}
+#fb-setup-save{margin-top:8px;width:100%;padding:7px;background:rgba(255,180,0,.25);border:1px solid rgba(255,180,0,.4);border-radius:6px;color:#ffc;font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;cursor:pointer}
+#fb-setup-save:hover{background:rgba(255,180,0,.4)}
+
+/* ══════════════════════════ LOADING ══════════════════════════ */
+#s-load{display:none;position:fixed;inset:0;z-index:300;background:var(--dark);flex-direction:column;align-items:center;justify-content:center;gap:22px}
+#s-load.show{display:flex}
+.ld-cross{font-size:58px;animation:glow 2s ease-in-out infinite alternate}
+@keyframes glow{from{text-shadow:0 0 20px rgba(255,215,0,.4)}to{text-shadow:0 0 50px rgba(255,215,0,.9),0 0 80px rgba(255,215,0,.3)}}
+.ld-title{font-family:'Cinzel Decorative',serif;font-size:16px;color:var(--gold-b);letter-spacing:2px;text-align:center}
+.ld-pw{width:240px;height:2px;background:rgba(184,134,11,.2);border-radius:2px;overflow:hidden}
+#ld-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-b));transition:width .3s;box-shadow:0 0 10px rgba(255,215,0,.5)}
+#ld-st{font-size:11px;letter-spacing:2px;color:var(--parch-d)}
 </style>
 </head>
 <body>
 
-<!-- Fondo animado -->
-<div class="bg">
+<!-- Fondo -->
+<div class="bg" id="bg">
   <div class="bg-ray"></div><div class="bg-ray"></div>
   <div class="bg-ray"></div><div class="bg-ray"></div>
   <div class="particles" id="particles"></div>
 </div>
 
-<!-- Card de login -->
-<div class="card" id="card">
-
-  <div class="hdr">
-    <div class="cross-wrap"><span class="cross-icon">✝</span></div>
-    <div class="hdr-title">Santa Biblia</div>
-    <div class="hdr-sub">Con Agente de Inteligencia Artificial</div>
-  </div>
-
-  <div class="divider">ACCESO</div>
-
-  <!-- Usuario -->
-  <div class="field">
-    <label>Nombre de usuario</label>
-    <div class="field-wrap">
-      <input type="text" id="f-user" placeholder="Tu nombre…" autocomplete="username" maxlength="40">
-      <span class="field-icon" id="ico-user"></span>
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div id="s-login">
+  <div class="card">
+    <div class="hdr">
+      <div class="cross-wrap"><span class="cross-icon">✝</span></div>
+      <div class="hdr-title">Santa Biblia</div>
+      <div class="hdr-sub">Con Agente de Inteligencia Artificial</div>
     </div>
-  </div>
+    <div class="divider">ACCESO</div>
 
-  
-  <div class="field">
-    <label>Clave IA de Texto</label>
-    <div class="field-wrap">
-      <input type="password" id="f-or" placeholder="Clave IA de Texto…" autocomplete="off" maxlength="120">
-      <button class="eye-btn" type="button" onclick="toggleEye('f-or',this)" tabindex="-1">👁</button>
+    <div class="field">
+      <label>Nombre de usuario</label>
+      <div class="field-wrap">
+        <input type="text" id="f-user" placeholder="Tu nombre…" autocomplete="username" maxlength="40" oninput="onNameInput(this.value)">
+        <span class="field-icon" id="ico-user"></span>
+      </div>
     </div>
-    
-  </div>
-
-  
-  <div class="field">
-    <label>Clave IA de Imágenes</label>
-    <div class="field-wrap">
-      <input type="password" id="f-horde" placeholder="Clave IA de Imágenes…" autocomplete="off" maxlength="80">
-      <button class="eye-btn" type="button" onclick="toggleEye('f-horde',this)" tabindex="-1">👁</button>
+    <div class="field">
+      <label>Clave IA de Texto</label>
+      <div class="field-wrap">
+        <input type="password" id="f-or" placeholder="Clave IA de Texto…" autocomplete="off" maxlength="120">
+        <button class="eye-btn" type="button" onclick="toggleEye('f-or',this)" tabindex="-1">👁</button>
+      </div>
     </div>
-    
+    <div class="field">
+      <label>Clave IA de Imágenes</label>
+      <div class="field-wrap">
+        <input type="password" id="f-horde" placeholder="Clave IA de Imágenes…" autocomplete="off" maxlength="80">
+        <button class="eye-btn" type="button" onclick="toggleEye('f-horde',this)" tabindex="-1">👁</button>
+      </div>
+    </div>
+
+    <div id="msg" class="info"></div>
+    <button class="btn-enter" id="btn-enter" onclick="doLogin()">
+      <span class="btn-txt" id="btn-txt">ENTRAR</span>
+      <div class="btn-spin" id="btn-spin"></div>
+    </button>
   </div>
-
-  <div id="msg" class="info"></div>
-
-  <button class="btn-enter" id="btn-enter" onclick="doLogin()">
-    <span id="btn-txt">ENTRAR</span>
-    <div class="btn-spinner" id="btn-spin"></div>
-  </button>
-
 </div>
 
-<!-- Loading overlay después de auth -->
-<div id="loading">
+<!-- ══════════ CHAT FAB + PANEL ══════════ -->
+<button id="chat-fab" onclick="toggleChat()">
+  💬<div class="chat-badge" id="chat-badge">0</div>
+</button>
+
+<div id="chat-panel">
+  <div class="chat-hdr">
+    <div>
+      <div class="chat-hdr-title">✝ CHAT CON ADMINISTRADOR</div>
+      <div class="chat-hdr-sub" id="chat-hdr-sub">Escribe para enviar un mensaje</div>
+    </div>
+    <button id="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div id="chat-msgs"><div class="chat-empty">Inicia una conversación…</div></div>
+  <div class="chat-inp-row">
+    <textarea id="chat-input" rows="1" placeholder="Escribe un mensaje…" onkeydown="chatKey(event)"></textarea>
+    <button id="chat-send" onclick="sendChatMsg()">➤</button>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN PANEL ══════════ -->
+<div id="s-admin">
+  <div class="adm-topbar">
+    <div class="adm-logo">✝ Panel de Administración<span>SANTA BIBLIA — CONTROL DE ACCESO</span></div>
+    <button class="adm-logout" onclick="adminLogout()">✕ CERRAR SESIÓN</button>
+  </div>
+
+  <div class="adm-body">
+
+    <!-- Firebase setup (solo si no está configurado) -->
+    <div id="fb-setup">
+      ⚙ <strong>Configurar base de datos</strong> — Introduce la URL de Firebase Realtime Database:<br>
+      <input id="fb-url-inp" type="text" placeholder="https://tu-proyecto-default-rtdb.firebaseio.com">
+      <button id="fb-setup-save" onclick="saveFbUrl()">💾 GUARDAR Y ACTIVAR</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="adm-stats">
+      <div class="stat-box"><div class="stat-num" id="stat-total">0</div><div class="stat-lbl">USUARIOS</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-online" style="color:var(--green)">0</div><div class="stat-lbl">EN LÍNEA</div></div>
+      <div class="stat-box"><div class="stat-num" id="stat-msgs" style="color:var(--blue)">0</div><div class="stat-lbl">MENSAJES</div></div>
+    </div>
+
+    <div class="adm-grid">
+
+      <!-- Usuarios -->
+      <div class="adm-card">
+        <div class="adm-card-hdr">
+          USUARIOS REGISTRADOS
+          <div style="display:flex;gap:8px">
+            <button onclick="loadAdminData()" style="background:rgba(91,155,213,.15);border:1px solid var(--admin-border);border-radius:6px;padding:4px 10px;color:#7fb3e0;font-size:10px;cursor:pointer;font-family:'Cinzel',serif">↻ ACTUALIZAR</button>
+            <div class="badge" id="badge-users">0</div>
+          </div>
+        </div>
+        <div id="adm-user-list"><div class="user-empty">Sin usuarios registrados.</div></div>
+      </div>
+
+      <!-- Chat admin -->
+      <div class="adm-card">
+        <div class="adm-card-hdr">MENSAJES DE CHAT<div class="badge" id="badge-msgs">0</div></div>
+        <div class="adm-chat-msgs" id="adm-chat-msgs"><div class="chat-empty">Sin mensajes.</div></div>
+        <div class="adm-chat-inp">
+          <select id="adm-chat-to"><option value="all">📢 Todos</option></select>
+          <input id="adm-chat-msg" placeholder="Mensaje del administrador…" onkeydown="if(event.key==='Enter')admSendMsg()">
+          <button id="adm-chat-send" onclick="admSendMsg()">➤</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Edit Keys Modal -->
+<div id="modal-edit">
+  <div class="modal-box">
+    <div class="modal-title">✎ EDITAR CLAVES DE USUARIO</div>
+    <div style="font-family:'Cinzel',serif;font-size:11px;color:rgba(127,179,224,.6);text-align:center;margin-bottom:16px" id="modal-user-name"></div>
+    <div class="modal-field"><label>Nueva Clave IA de Texto</label><input type="text" id="modal-or" placeholder="Dejar vacío para no cambiar"></div>
+    <div class="modal-field"><label>Nueva Clave IA de Imágenes</label><input type="text" id="modal-horde" placeholder="Dejar vacío para no cambiar"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveEditKeys()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="s-load">
   <div class="ld-cross">✝</div>
   <div class="ld-title">Abriendo las Escrituras…</div>
   <div class="ld-pw"><div id="ld-bar"></div></div>
@@ -331,218 +335,604 @@ body {
 </div>
 
 <script>
-// ── Partículas de fondo ──
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════
+   CONFIGURACIÓN
+══════════════════════════════════════════════════════════════ */
+
+// Admin hardcoded (nunca se almacena en Firebase)
+const ADMIN_USER  = 'Karel';
+const ADMIN_PASS  = 'K@rel.2255'; // ambas claves deben ser esto
+
+// Clave de cifrado para Firebase (XOR)
+const _EK = ['Bib','lia','Sag','rad','a_A','dm1','n_E','nc_','K3y','_20','24_','Sec'];
+const ENC_KEY = _EK.join('');
+
+/* ══════════════════════════════════════════════════════════════
+   FIREBASE REST API
+══════════════════════════════════════════════════════════════ */
+function getFbUrl(){ return localStorage.getItem('biblia_fb_url') || ''; }
+
+async function fbGet(path){
+  var url=getFbUrl(); if(!url) return null;
+  try{
+    var r=await fetch(url+path+'.json',{cache:'no-store'});
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){return null;}
+}
+
+async function fbSet(path,data){
+  var url=getFbUrl(); if(!url) return false;
+  try{
+    var r=await fetch(url+path+'.json',{method:'PUT',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}});
+    return r.ok;
+  }catch(e){return false;}
+}
+
+async function fbPatch(path,data){
+  var url=getFbUrl(); if(!url) return false;
+  try{
+    var r=await fetch(url+path+'.json',{method:'PATCH',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}});
+    return r.ok;
+  }catch(e){return false;}
+}
+
+async function fbPush(path,data){
+  var url=getFbUrl(); if(!url) return null;
+  try{
+    var r=await fetch(url+path+'.json',{method:'POST',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}});
+    if(!r.ok) return null;
+    var j=await r.json(); return j.name;
+  }catch(e){return null;}
+}
+
+async function fbDelete(path){
+  var url=getFbUrl(); if(!url) return false;
+  try{
+    var r=await fetch(url+path+'.json',{method:'DELETE'});
+    return r.ok;
+  }catch(e){return false;}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CIFRADO XOR + BASE64
+══════════════════════════════════════════════════════════════ */
+function enc(str){
+  if(!str) return '';
+  var b=new TextEncoder().encode(String(str));
+  var k=new TextEncoder().encode(ENC_KEY);
+  var out=new Uint8Array(b.length);
+  for(var i=0;i<b.length;i++) out[i]=b[i]^k[i%k.length];
+  return btoa(String.fromCharCode(...out));
+}
+function dec(b64){
+  if(!b64) return '';
+  try{
+    var bin=atob(b64);
+    var b=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++) b[i]=bin.charCodeAt(i);
+    var k=new TextEncoder().encode(ENC_KEY);
+    var out=new Uint8Array(b.length);
+    for(var i=0;i<b.length;i++) out[i]=b[i]^k[i%k.length];
+    return new TextDecoder().decode(out);
+  }catch(e){return '';}
+}
+
+// Clave de usuario para Firebase (safe key desde nombre)
+function userKey(name){ return btoa(encodeURIComponent(name.toLowerCase())).replace(/[+/=]/g,'_'); }
+
+/* ══════════════════════════════════════════════════════════════
+   ESTADO LOCAL
+══════════════════════════════════════════════════════════════ */
+var _myName='';
+var _mySid='';  // session ID
+var _chatOpen=false;
+var _chatPollTimer=null;
+var _heartbeatTimer=null;
+var _lastMsgTs=0;
+var _newMsgCount=0;
+var _editingKey=''; // userKey siendo editado en modal
+
+/* ══════════════════════════════════════════════════════════════
+   PARTÍCULAS
+══════════════════════════════════════════════════════════════ */
 (function(){
-  var container = document.getElementById('particles');
-  for(var i=0;i<18;i++){
-    var p=document.createElement('div');
-    p.className='p';
-    var size = Math.random()*3+1;
-    p.style.cssText=[
-      'width:'+size+'px','height:'+size+'px',
-      'left:'+Math.random()*100+'%',
-      'animation-duration:'+(Math.random()*20+15)+'s',
-      'animation-delay:'+(Math.random()*15)+'s',
-      'opacity:0'
-    ].join(';');
-    container.appendChild(p);
+  var c=document.getElementById('particles');
+  for(var i=0;i<16;i++){
+    var p=document.createElement('div'); p.className='p';
+    var sz=Math.random()*3+1;
+    p.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+Math.random()*100+'%;animation-duration:'+(Math.random()*20+15)+'s;animation-delay:'+(Math.random()*15)+'s;opacity:0';
+    c.appendChild(p);
   }
 })();
 
-// ── Eye toggle ──
-function toggleEye(id, btn){
-  var inp = document.getElementById(id);
-  inp.type = inp.type==='password' ? 'text' : 'password';
-  btn.textContent = inp.type==='password' ? '👁' : '🙈';
-}
-
-// ── Estado del formulario ──
-function setMsg(txt,cls){ var m=document.getElementById('msg'); m.textContent=txt; m.className=cls||'info'; }
-function setField(id,state){
-  var inp=document.getElementById(id);
-  inp.classList.remove('ok','fail');
-  if(state) inp.classList.add(state);
-}
+/* ══════════════════════════════════════════════════════════════
+   UI HELPERS
+══════════════════════════════════════════════════════════════ */
+function setMsg(t,cls){ var m=document.getElementById('msg'); m.textContent=t; m.className=cls||'info'; }
+function setField(id,st){ var e=document.getElementById(id); e.classList.remove('ok','fail'); if(st) e.classList.add(st); }
 function setBusy(b){
-  var btn=document.getElementById('btn-enter');
-  var txt=document.getElementById('btn-txt');
-  var spin=document.getElementById('btn-spin');
-  btn.disabled=b;
-  txt.style.display=b?'none':'block';
-  spin.style.display=b?'block':'none';
+  document.getElementById('btn-enter').disabled=b;
+  document.getElementById('btn-txt').style.display=b?'none':'block';
+  document.getElementById('btn-spin').style.display=b?'block':'none';
+}
+function toggleEye(id,btn){ var i=document.getElementById(id); i.type=i.type==='password'?'text':'password'; btn.textContent=i.type==='password'?'👁':'🙈'; }
+function fmtTime(ts){ var d=new Date(ts); return d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}); }
+function fmtDate(ts){ var d=new Date(ts); return d.toLocaleDateString('es',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}); }
+
+/* ══════════════════════════════════════════════════════════════
+   NOMBRE → CHAT FAB
+══════════════════════════════════════════════════════════════ */
+function onNameInput(val){
+  _myName=val.trim();
+  var fab=document.getElementById('chat-fab');
+  if(_myName.length>=2){
+    fab.style.display='flex';
+    document.getElementById('chat-hdr-sub').textContent='Como: '+_myName;
+  } else {
+    fab.style.display='none';
+    if(_chatOpen) toggleChat();
+  }
 }
 
-
+/* ══════════════════════════════════════════════════════════════
+   VALIDACIÓN APIs
+══════════════════════════════════════════════════════════════ */
 async function checkOR(key){
-  try{
-    var r=await fetch('https://openrouter.ai/api/v1/models',{
-      headers:{'Authorization':'Bearer '+key}
-    });
-    return r.ok; // 200 = key válida
-  }catch(e){ return false; }
+  try{var r=await fetch('https://openrouter.ai/api/v1/models',{headers:{'Authorization':'Bearer '+key}});return r.ok;}catch(e){return false;}
 }
-
-
 async function checkHorde(key){
-  try{
-    var r=await fetch('https://aihorde.net/api/v2/find_user',{
-      headers:{
-        'apikey': key,
-        'Client-Agent': 'BibliaSagradaIA:1.0:biblia'
-      }
-    });
-    return r.ok;
-  }catch(e){ return false; }
+  try{var r=await fetch('https://aihorde.net/api/v2/find_user',{headers:{'apikey':key,'Client-Agent':'BibliaSagradaIA:1.0:biblia'}});return r.ok;}catch(e){return false;}
 }
 
-// ── Login ──
+/* ══════════════════════════════════════════════════════════════
+   SESIÓN — Firebase
+══════════════════════════════════════════════════════════════ */
+function genSid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+
+async function checkDuplicate(name,orKey,hKey){
+  // Devuelve: 'ok' | 'same_user' | 'duplicate'
+  var k=userKey(name);
+  var data=await fbGet('/sessions/'+k);
+  if(!data) return 'ok'; // no existe
+  var storedOr=dec(data.or);
+  var storedHorde=dec(data.horde);
+  // Admin puede editar las claves; si admin puso override, usar esas
+  var effectiveOr  = data.or_override  ? dec(data.or_override)  : storedOr;
+  var effectiveHorde = data.horde_override ? dec(data.horde_override) : storedHorde;
+  if(effectiveOr===orKey && effectiveHorde===hKey) return 'same_user';
+  // misma key, diferente claves → podría ser misma persona con claves nuevas
+  // si hay override de admin, permitir con las claves override
+  if(data.or_override && dec(data.or_override)===orKey) return 'same_user';
+  return 'duplicate';
+}
+
+async function createOrUpdateSession(name,orKey,hKey){
+  var k=userKey(name);
+  var existing=await fbGet('/sessions/'+k);
+  var sid=genSid();
+  localStorage.setItem('biblia_sid',sid);
+  var loginCount=(existing&&existing.loginCount?existing.loginCount:0)+1;
+  var payload={
+    name: enc(name),
+    or:   enc(orKey),
+    horde:enc(hKey),
+    loginCount: loginCount,
+    lastSeen: Date.now(),
+    active:true,
+    revoked:false,
+    sid: enc(sid)
+  };
+  // Conservar overrides del admin si existen
+  if(existing&&existing.or_override)    payload.or_override=existing.or_override;
+  if(existing&&existing.horde_override) payload.horde_override=existing.horde_override;
+  await fbSet('/sessions/'+k, payload);
+  return sid;
+}
+
+async function heartbeat(){
+  if(!_myName||!_mySid) return;
+  var k=userKey(_myName);
+  var data=await fbGet('/sessions/'+k);
+  if(!data) return;
+  // Detectar revocación
+  if(data.revoked===true){
+    clearInterval(_heartbeatTimer);
+    clearInterval(_chatPollTimer);
+    alert('⚠ Tu sesión ha sido cerrada por el administrador.');
+    location.reload();
+    return;
+  }
+  // Aplicar override de claves si el admin las cambió
+  if(data.or_override){
+    var newOr=dec(data.or_override);
+    if(newOr && newOr!==localStorage.getItem('or_key_biblia')){
+      localStorage.setItem('or_key_biblia',newOr);
+    }
+  }
+  if(data.horde_override){
+    var newH=dec(data.horde_override);
+    if(newH && newH!==localStorage.getItem('horde_key_biblia')){
+      localStorage.setItem('horde_key_biblia',newH);
+    }
+  }
+  // Actualizar lastSeen
+  await fbPatch('/sessions/'+k,{lastSeen:Date.now()});
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CHAT — Usuario
+══════════════════════════════════════════════════════════════ */
+function toggleChat(){
+  _chatOpen=!_chatOpen;
+  var panel=document.getElementById('chat-panel');
+  panel.style.display=_chatOpen?'flex':'none';
+  if(_chatOpen){
+    _newMsgCount=0;
+    document.getElementById('chat-badge').style.display='none';
+    loadUserChat();
+    if(!_chatPollTimer) _chatPollTimer=setInterval(loadUserChat,3000);
+  } else {
+    if(_chatPollTimer){clearInterval(_chatPollTimer);_chatPollTimer=null;}
+  }
+}
+
+async function loadUserChat(){
+  if(!getFbUrl()) return;
+  var msgs=await fbGet('/chat');
+  var container=document.getElementById('chat-msgs');
+  if(!msgs||typeof msgs!=='object'){
+    container.innerHTML='<div class="chat-empty">Inicia una conversación…</div>';
+    return;
+  }
+  var arr=Object.values(msgs)
+    .map(m=>({...m,from:dec(m.from),text:dec(m.text)}))
+    .filter(m=>m.from===_myName||m.isAdmin===true)
+    .sort((a,b)=>a.ts-b.ts);
+
+  var newOnes=arr.filter(m=>m.ts>_lastMsgTs&&m.isAdmin);
+  if(newOnes.length&&!_chatOpen){
+    _newMsgCount+=newOnes.length;
+    var badge=document.getElementById('chat-badge');
+    badge.style.display='flex';
+    badge.textContent=_newMsgCount;
+  }
+  if(arr.length>0) _lastMsgTs=Math.max(...arr.map(m=>m.ts));
+
+  container.innerHTML=arr.map(m=>{
+    var isMe=m.from===_myName;
+    return '<div class="msg-bubble '+(isMe?'msg-mine':'msg-admin')+'">'
+      +'<div class="msg-from">'+(m.isAdmin?'✝ Administrador':m.from)+'</div>'
+      +escHtml(m.text)
+      +'<div class="msg-time">'+fmtTime(m.ts)+'</div>'
+      +'</div>';
+  }).join('');
+  container.scrollTop=container.scrollHeight;
+}
+
+async function sendChatMsg(){
+  if(!_myName||_myName.length<2){setMsg('Escribe tu nombre primero','err');return;}
+  var inp=document.getElementById('chat-input');
+  var text=inp.value.trim();
+  if(!text) return;
+  if(!getFbUrl()){setMsg('Sistema no configurado. Contacta al administrador.','err');return;}
+  inp.value='';
+  await fbPush('/chat',{from:enc(_myName),text:enc(text),ts:Date.now(),isAdmin:false,preLogin:!localStorage.getItem('or_key_biblia')});
+  loadUserChat();
+}
+
+function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMsg();}}
+
+/* ══════════════════════════════════════════════════════════════
+   LOGIN FLOW
+══════════════════════════════════════════════════════════════ */
 async function doLogin(){
-  var user  = document.getElementById('f-user').value.trim();
+  var name  = document.getElementById('f-user').value.trim();
   var orKey = document.getElementById('f-or').value.trim();
   var hKey  = document.getElementById('f-horde').value.trim();
 
-  // Validación básica
-  if(!user){
-    setMsg('Por favor introduce tu nombre de usuario','err');
-    document.getElementById('f-user').focus();
-    return;
-  }
-  if(!orKey || !orKey.startsWith('sk-or')){
-    setField('f-or','fail');
-    setMsg('La Clave IA de Texto no es válida','err');
-    document.getElementById('f-or').focus();
-    return;
-  }
-  if(!hKey || hKey.length < 4){
-    setField('f-horde','fail');
-    setMsg('Introduce la Clave IA de Imágenes','err');
-    document.getElementById('f-horde').focus();
+  if(!name){setMsg('Introduce tu nombre de usuario','err');document.getElementById('f-user').focus();return;}
+  if(!orKey){setField('f-or','fail');setMsg('Introduce la Clave IA de Texto','err');return;}
+  if(!hKey){setField('f-horde','fail');setMsg('Introduce la Clave IA de Imágenes','err');return;}
+
+  setField('f-or','');setField('f-horde','');
+
+  // ── ADMIN BYPASS ──
+  if(name===ADMIN_USER && orKey===ADMIN_PASS && hKey===ADMIN_PASS){
+    setBusy(true);setMsg('Verificando credenciales de administrador…','info');
+    await new Promise(r=>setTimeout(r,500));
+    openAdminPanel();
     return;
   }
 
-  // Reset estados
-  setField('f-or',''); setField('f-horde','');
   setBusy(true);
 
-  
-  setMsg('Verificando Clave IA de Texto…','info');
-  var orOk = await checkOR(orKey);
-  if(!orOk){
-    setField('f-or','fail');
-    setMsg('❌ Clave IA de Texto inválida o sin conexión','err');
-    setBusy(false);
-    return;
+  // ── Verificar duplicado ──
+  if(getFbUrl()){
+    setMsg('Verificando disponibilidad del nombre…','info');
+    var dupResult=await checkDuplicate(name,orKey,hKey);
+    if(dupResult==='duplicate'){
+      setMsg('❌ Ese nombre de usuario ya está en uso. Elige otro.','err');
+      setField('f-user','fail');
+      setBusy(false);
+      return;
+    }
   }
+
+  // ── Verificar IA de Texto ──
+  setMsg('Verificando Clave IA de Texto…','info');
+  var orOk=await checkOR(orKey);
+  if(!orOk){setField('f-or','fail');setMsg('❌ Clave IA de Texto inválida o sin conexión','err');setBusy(false);return;}
   setField('f-or','ok');
 
-  
+  // ── Verificar IA de Imágenes ──
   setMsg('Verificando Clave IA de Imágenes…','info');
-  var hOk = await checkHorde(hKey);
-  if(!hOk){
-    setField('f-horde','fail');
-    setMsg('❌ Clave IA de Imágenes inválida o sin conexión','err');
-    setBusy(false);
-    return;
-  }
+  var hOk=await checkHorde(hKey);
+  if(!hOk){setField('f-horde','fail');setMsg('❌ Clave IA de Imágenes inválida o sin conexión','err');setBusy(false);return;}
   setField('f-horde','ok');
 
-  setMsg('✅ Acceso concedido — bienvenido, '+user+'','ok');
+  setMsg('✅ Acceso concedido — bienvenido, '+name,'ok');
 
   // ── Guardar en localStorage ──
-  localStorage.setItem('biblia_username',    user);
-  localStorage.setItem('or_key_biblia',      orKey);
-  localStorage.setItem('horde_key_biblia',   hKey);
+  localStorage.setItem('biblia_username',name);
+  localStorage.setItem('or_key_biblia',  orKey);
+  localStorage.setItem('horde_key_biblia',hKey);
+  _myName=name;
 
-  // Esperar un momento para que el usuario vea el OK
-  await new Promise(r=>setTimeout(r,700));
+  // ── Registrar sesión en Firebase ──
+  if(getFbUrl()){
+    _mySid=await createOrUpdateSession(name,orKey,hKey);
+    localStorage.setItem('biblia_sid',_mySid);
+  }
 
-  // ── Mostrar overlay de carga y descifrar ──
-  document.getElementById('card').style.opacity='0';
-  document.getElementById('card').style.transform='scale(.96)';
-  document.getElementById('card').style.transition='all .4s ease';
+  await new Promise(r=>setTimeout(r,600));
+
+  // ── Lanzar Biblia ──
+  document.getElementById('s-login').style.opacity='0';
+  document.getElementById('s-login').style.transition='opacity .4s';
+  document.getElementById('chat-fab').style.display='none';
+  document.getElementById('chat-panel').style.display='none';
   await new Promise(r=>setTimeout(r,350));
-  document.getElementById('loading').classList.add('show');
+  document.getElementById('s-load').classList.add('show');
   loadBible();
 }
 
-// ── Descifrado y lanzamiento de la Biblia ──
-var _k=['Bibl','ia19','09RV','A-Pr','otec','tedC','onte','nt-K','ey-2','024-','GitH','ubPa','ges'];
-var KEY = _k.join('');
-var KEY_B = new TextEncoder().encode(KEY);
+/* ══════════════════════════════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════════════════════════════ */
+function openAdminPanel(){
+  document.getElementById('s-login').style.display='none';
+  document.getElementById('chat-fab').style.display='none';
+  document.getElementById('bg').style.display='none';
+  document.getElementById('s-admin').style.display='block';
 
-function b64ToBytes(b64){
-  var bin=atob(b64),b=new Uint8Array(bin.length);
-  for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);
-  return b;
+  // Mostrar setup si no hay Firebase configurado
+  if(!getFbUrl()){
+    document.getElementById('fb-setup').style.display='block';
+  }
+
+  loadAdminData();
+  // Poll cada 5 segundos
+  setInterval(loadAdminData,5000);
 }
-function xorDec(enc,key){
-  var out=new Uint8Array(enc.length),kl=key.length;
-  for(var i=0;i<enc.length;i++)out[i]=enc[i]^key[i%kl];
-  return out;
+
+function adminLogout(){
+  document.getElementById('s-admin').style.display='none';
+  document.getElementById('s-login').style.display='';
+  document.getElementById('bg').style.display='';
+  document.getElementById('f-user').value='';
+  document.getElementById('f-or').value='';
+  document.getElementById('f-horde').value='';
+  setMsg('','info');
+  setBusy(false);
 }
-function ldProg(p,m){
-  document.getElementById('ld-bar').style.width=p+'%';
-  if(m!==undefined) document.getElementById('ld-st').textContent=m;
+
+function saveFbUrl(){
+  var url=document.getElementById('fb-url-inp').value.trim().replace(/\/$/,'');
+  if(!url.startsWith('https://')){alert('URL inválida. Debe comenzar con https://');return;}
+  localStorage.setItem('biblia_fb_url',url);
+  document.getElementById('fb-setup').style.display='none';
+  loadAdminData();
 }
+
+async function loadAdminData(){
+  if(!getFbUrl()) return;
+  var sessions=await fbGet('/sessions');
+  var messages=await fbGet('/chat');
+  renderAdminUsers(sessions);
+  renderAdminChat(messages);
+  updateAdminStats(sessions,messages);
+}
+
+function updateAdminStats(sessions,messages){
+  var users=sessions?Object.values(sessions):[];
+  var now=Date.now();
+  var online=users.filter(u=>u.lastSeen&&(now-u.lastSeen)<120000&&!u.revoked).length;
+  var msgs=messages?Object.keys(messages).length:0;
+  document.getElementById('stat-total').textContent=users.filter(u=>!u.revoked).length;
+  document.getElementById('stat-online').textContent=online;
+  document.getElementById('stat-msgs').textContent=msgs;
+  document.getElementById('badge-users').textContent=users.filter(u=>!u.revoked).length;
+  document.getElementById('badge-msgs').textContent=msgs;
+}
+
+function renderAdminUsers(sessions){
+  var container=document.getElementById('adm-user-list');
+  var select=document.getElementById('adm-chat-to');
+  var prevTo=select.value;
+
+  if(!sessions||Object.keys(sessions).length===0){
+    container.innerHTML='<div class="user-empty">Sin usuarios registrados.</div>';
+    select.innerHTML='<option value="all">📢 Todos</option>';
+    return;
+  }
+
+  var now=Date.now();
+  var rows=Object.entries(sessions)
+    .map(([k,v])=>({key:k,name:dec(v.name),or:dec(v.or),horde:dec(v.horde),
+      loginCount:v.loginCount||1,lastSeen:v.lastSeen||0,revoked:v.revoked||false,
+      orOv:v.or_override?dec(v.or_override):'',hordeOv:v.horde_override?dec(v.horde_override):''}))
+    .filter(u=>!u.revoked)
+    .sort((a,b)=>b.lastSeen-a.lastSeen);
+
+  container.innerHTML=rows.map(u=>{
+    var online=!u.revoked&&(now-u.lastSeen)<120000;
+    var lcCls=u.loginCount>2?'login-count lc-warn':'login-count lc-ok';
+    var orMask=(u.orOv||u.or).slice(0,8)+'••••••';
+    var hMask=(u.hordeOv||u.horde).slice(0,6)+'••••';
+    return '<div class="user-row">'
+      +'<div class="user-dot '+(online?'dot-online':'dot-offline')+'"></div>'
+      +'<div>'
+        +'<div class="user-name">'+escHtml(u.name)+'</div>'
+        +'<div style="font-size:9px;color:rgba(127,179,224,.35);margin-top:2px;font-family:monospace">T:'+orMask+' · I:'+hMask+'</div>'
+      +'</div>'
+      +'<div class="user-meta">'
+        +'<span class="'+lcCls+'">'+u.loginCount+'× login</span>'
+        +'<span>'+fmtDate(u.lastSeen)+'</span>'
+      +'</div>'
+      +'<div class="user-actions">'
+        +'<button class="adm-btn adm-btn-edit" onclick="openEditModal(\''+u.key+'\',\''+escHtml(u.name)+'\',\''+escHtml(u.or)+'\',\''+escHtml(u.horde)+'\')">✎</button>'
+        +'<button class="adm-btn adm-btn-kick" onclick="kickUser(\''+u.key+'\',\''+escHtml(u.name)+'\')">✕</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+
+  // Actualizar select de destino del chat
+  select.innerHTML='<option value="all">📢 Todos</option>'
+    +rows.map(u=>'<option value="'+escHtml(u.name)+'"'+(u.name===prevTo?' selected':'')+'>'
+      +(now-u.lastSeen<120000?'🟢 ':' ')+escHtml(u.name)+'</option>').join('');
+}
+
+function renderAdminChat(messages){
+  var container=document.getElementById('adm-chat-msgs');
+  if(!messages||Object.keys(messages).length===0){
+    container.innerHTML='<div class="chat-empty">Sin mensajes.</div>';
+    return;
+  }
+  var arr=Object.values(messages)
+    .map(m=>({...m,from:dec(m.from),text:dec(m.text)}))
+    .sort((a,b)=>a.ts-b.ts);
+
+  container.innerHTML=arr.map(m=>{
+    var cls=m.isAdmin?'adm-msg adm-msg-admin-sent':'adm-msg adm-msg-user';
+    return '<div class="'+cls+'">'
+      +'<div class="adm-msg-from">'+(m.isAdmin?'✝ Admin →'+(m.toUser?' '+dec(m.toUser):' Todos'):'👤 '+escHtml(m.from)+(m.preLogin?' <em style="opacity:.5">(sin login)</em>':''))+'</div>'
+      +escHtml(m.text)
+      +'<div style="font-size:9px;opacity:.35;margin-top:3px">'+fmtDate(m.ts)+'</div>'
+      +'</div>';
+  }).join('');
+  container.scrollTop=container.scrollHeight;
+}
+
+async function admSendMsg(){
+  var to=document.getElementById('adm-chat-to').value;
+  var txt=document.getElementById('adm-chat-msg').value.trim();
+  if(!txt) return;
+  document.getElementById('adm-chat-msg').value='';
+  var payload={
+    from:enc(ADMIN_USER),
+    text:enc(txt),
+    ts:Date.now(),
+    isAdmin:true,
+    toUser:to==='all'?null:enc(to)
+  };
+  await fbPush('/chat',payload);
+  loadAdminData();
+}
+
+async function kickUser(key,name){
+  if(!confirm('¿Cerrar sesión de "'+name+'"?')) return;
+  await fbPatch('/sessions/'+key,{revoked:true,active:false});
+  loadAdminData();
+}
+
+// ── Edit keys modal ──
+function openEditModal(key,name,or,horde){
+  _editingKey=key;
+  document.getElementById('modal-user-name').textContent='Usuario: '+name;
+  document.getElementById('modal-or').value=or;
+  document.getElementById('modal-horde').value=horde;
+  document.getElementById('modal-edit').classList.add('show');
+}
+function closeModal(){ document.getElementById('modal-edit').classList.remove('show'); _editingKey=''; }
+
+async function saveEditKeys(){
+  if(!_editingKey) return;
+  var newOr   =document.getElementById('modal-or').value.trim();
+  var newHorde=document.getElementById('modal-horde').value.trim();
+  var patch={};
+  if(newOr)    patch.or_override   =enc(newOr);
+  if(newHorde) patch.horde_override=enc(newHorde);
+  if(Object.keys(patch).length===0){closeModal();return;}
+  await fbPatch('/sessions/'+_editingKey,patch);
+  closeModal();
+  loadAdminData();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DESCIFRADO Y LANZAMIENTO DE LA BIBLIA
+══════════════════════════════════════════════════════════════ */
+var _bk=['Bibl','ia19','09RV','A-Pr','otec','tedC','onte','nt-K','ey-2','024-','GitH','ubPa','ges'];
+var BIBLE_KEY=_bk.join('');
+var BIBLE_KEY_B=new TextEncoder().encode(BIBLE_KEY);
+
+function b64ToBytes(b64){ var bin=atob(b64),b=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i); return b; }
+function xorDec(enc2,key){ var out=new Uint8Array(enc2.length),kl=key.length; for(var i=0;i<enc2.length;i++)out[i]=enc2[i]^key[i%kl]; return out; }
+function ldProg(p,m){ document.getElementById('ld-bar').style.width=p+'%'; if(m!==undefined)document.getElementById('ld-st').textContent=m; }
 
 async function loadBible(){
-  // Registrar SW
   if('serviceWorker' in navigator){
     try{
       var reg=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});
-      if(reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
-      reg.addEventListener('updatefound',function(){
-        var nw=reg.installing; if(!nw)return;
-        nw.addEventListener('statechange',function(){
-          if(nw.state==='installed'&&navigator.serviceWorker.controller)
-            nw.postMessage({type:'SKIP_WAITING'});
-        });
-      });
+      if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
   }
-
   ldProg(15,'Cargando Escrituras…');
   var encText;
-  try{
-    var r=await fetch('./bible.enc',{cache:'default'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    encText=await r.text();
-  }catch(e){
-    var r2=await fetch('./bible.enc',{cache:'reload'});
-    if(!r2.ok){ document.getElementById('ld-st').textContent='⚠ Error cargando bible.enc'; return; }
-    encText=await r2.text();
-  }
+  try{ var r=await fetch('./bible.enc',{cache:'default'}); if(!r.ok)throw new Error('HTTP '+r.status); encText=await r.text(); }
+  catch(e){ var r2=await fetch('./bible.enc',{cache:'reload'}); if(!r2.ok){document.getElementById('ld-st').textContent='⚠ Error cargando bible.enc';return;} encText=await r2.text(); }
   ldProg(55,'Escrituras recibidas…');
 
   var encBytes=b64ToBytes(encText.trim()); encText=null;
   ldProg(75,'Procesando…');
   await new Promise(r=>setTimeout(r,20));
 
-  var decBytes=xorDec(encBytes,KEY_B);
+  var decBytes=xorDec(encBytes,BIBLE_KEY_B);
   var html=new TextDecoder('utf-8').decode(decBytes); decBytes=null;
   ldProg(100,'Abriendo…');
-  await new Promise(r=>setTimeout(r,250));
+  await new Promise(r=>setTimeout(r,220));
 
-  document.open();
-  document.write(html);
-  document.close();
-  html=null;
+  // Iniciar heartbeat antes de reemplazar la página
+  _heartbeatTimer=setInterval(heartbeat,30000);
+
+  document.open(); document.write(html); document.close(); html=null;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   UTILIDADES
+══════════════════════════════════════════════════════════════ */
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 // Bloquear inspector
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
 document.addEventListener('keydown',function(e){
-  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&'IJCU'.includes(e.key))||(e.ctrlKey&&e.key==='U')||(e.metaKey&&e.altKey&&e.key==='I')){
-    e.preventDefault();e.stopPropagation();
-  }
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&'IJCU'.includes(e.key))||(e.ctrlKey&&e.key==='U')||(e.metaKey&&e.altKey&&e.key==='I')){e.preventDefault();e.stopPropagation();}
 },true);
 
-// Enter para enviar
+// Enter para login
 document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&!document.getElementById('btn-enter').disabled) doLogin();
+  if(e.key==='Enter'&&document.activeElement.id!=='chat-input'&&!document.getElementById('btn-enter').disabled&&document.getElementById('s-login').style.display!=='none'){
+    doLogin();
+  }
 });
 
-
+// Inicializar nombre desde lo que ya haya en el campo (por si el browser autocompleta)
+window.addEventListener('load',function(){
+  var v=document.getElementById('f-user').value.trim();
+  if(v) onNameInput(v);
+});
 </script>
 </body>
 </html>
